@@ -16,6 +16,7 @@ import {
   getOrderWsErrorInfo,
 } from '../types/orderManagementWs';
 import UserService from '@services/UserService';
+import { redirectToLoginPage } from '@utils/redirectToLoginPage';
 
 const AUTH_FAILURE_CLOSE_CODE = 4001;
 /** JWT/세션 없음 (Django AdminOrderManagementConsumer._authenticate) */
@@ -80,7 +81,7 @@ export function useOrderManagementWebSocket(
               codeStr === '401' ||
               errInfo.code === 401
             ) {
-              window.location.href = '/login';
+              redirectToLoginPage();
             }
             return;
           }
@@ -134,7 +135,7 @@ export function useOrderManagementWebSocket(
         if (aborted) return;
 
         if (e.code === AUTH_FAILURE_CLOSE_CODE) {
-          window.location.href = '/login';
+          redirectToLoginPage();
           return;
         }
         if (e.code === NO_BOOTH_CLOSE_CODE) {

@@ -5,6 +5,7 @@ import axios, {
   InternalAxiosRequestConfig,
 } from 'axios';
 import UserService from './UserService';
+import { redirectToLoginPage } from '@utils/redirectToLoginPage';
 
 // V3 인스턴스: 상대경로 baseURL → vite proxy(로컬) / netlify redirect(배포) 경유
 export const instance: AxiosInstance = axios.create({
@@ -47,6 +48,18 @@ const isAuthEndpoint = (url?: string) =>
 const isCsrfTokenEndpoint = (url?: string) =>
   url?.includes('/api/v3/django/auth/csrf-token/');
 
+/**
+ * 로그인·회원가입 등 아직 로그인되지 않은 상태의 auth 요청.
+ * 이 경로에서 오는 401은 "비밀번호 틀림" 등이므로 refresh/location.href 로그인 이동을 하면 안 됨.
+ */
+const isV3UnauthenticatedAuthRequest = (url?: string): boolean => {
+  if (!url?.includes('/api/v3/django/auth/')) return false;
+  if (url.includes('/refresh/')) return false;
+  if (url.includes('/csrf-token')) return false;
+  const path = url.split('?')[0].replace(/\/+$/, '');
+  return path.endsWith('/django/auth') || path.endsWith('/signup');
+};
+
 const isUnsafeMethod = (method?: string) => {
   const m = (method || 'GET').toUpperCase();
   return !['GET', 'HEAD', 'OPTIONS', 'TRACE'].includes(m);
@@ -77,7 +90,7 @@ instanceV2.interceptors.response.use(
   (error: AxiosError) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('accessToken');
-      window.location.href = '/login';
+      redirectToLoginPage();
     }
     return Promise.reject(error);
   }
@@ -144,7 +157,7 @@ const clearTokens = () => {
 };
 
 const redirectToLogin = () => {
-  window.location.href = '/login';
+  redirectToLoginPage();
 };
 
 function shouldAttemptV3RefreshRetry(originalRequest: any): boolean {
@@ -204,6 +217,13 @@ const v3ResponseErrorInterceptor = async (error: AxiosError, client: AxiosInstan
     return Promise.reject(
       new Error('세션/토큰이 만료되었습니다. 다시 로그인해주세요.')
     );
+  }
+
+  if (
+    error.response?.status === 401 &&
+    isV3UnauthenticatedAuthRequest(originalRequest.url)
+  ) {
+    return Promise.reject(error);
   }
 
   if (error.response?.status === 401 && !originalRequest._retry) {

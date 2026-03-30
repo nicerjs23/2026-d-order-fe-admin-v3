@@ -9,6 +9,7 @@ import { getManagerInfo } from './apis/getManagers';
 import { patchManagerInfo, type BoothMyPageData } from './apis/getManagerPatch';
 import { downloadManagerQR } from './apis/getQRDownload';
 import { requestLogout } from './apis/logout';
+import { redirectToLoginPage } from '@utils/redirectToLoginPage';
 import { resetTableData } from './apis/resetTableData';
 import { LoadingSpinner } from '../menu/api/LoadingSpinner';
 
@@ -165,10 +166,10 @@ const MyPage = () => {
       await requestLogout();
       localStorage.removeItem('accessToken'); 
       toast.success('로그아웃되었습니다.', { closeButton: false, style: toToastStyle() });
-      window.location.href = '/login';
+      redirectToLoginPage();
     } catch (err: any) {
       toast.error(err?.message || '로그아웃에 실패했습니다.', { closeButton: false, style: toToastStyle() });
-      window.location.href = '/login';
+      redirectToLoginPage();
     } finally { setShowLogoutModal(false); }
   };
 

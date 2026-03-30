@@ -82,6 +82,14 @@ export const Cover = styled.div`
   width: 100%;
 `;
 
+export const ErrorMessage = styled.p`
+  ${({ theme }) => theme.fonts.Medium14};
+  color: ${({ theme }) => theme.colors.Error};
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+`;
+
 export const BackIMG = styled.img`
   position: absolute;
   left: 40px;
