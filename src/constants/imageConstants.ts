@@ -10,16 +10,16 @@ import MenuLine from '@assets/icons/menuLine.svg';
 import Delete from '../assets/icons/deleteIcon.png';
 import BackWard_Black from '../assets/icons/BackwardBlack.svg';
 
-import Nav_home from '../assets/icons/navHome.svg';
+import Nav_home from '../assets/icons/navHomeV3.svg';
 import Nav_home_active from '../assets/icons/navHomeActive.svg';
-import Nav_table from '../assets/icons/navTable.svg';
+import Nav_table from '../assets/icons/navTableV3.svg';
 import Nav_table_active from '../assets/icons/navTableActive.svg';
-import Nav_menu from '../assets/icons/navMenu.svg';
-import Nav_menu_active from '../assets/icons/navMenuActive.svg';
-import Nav_my from '../assets/icons/navMy.svg';
-import Nav_my_active from '../assets/icons/navMyActive.svg';
-import Nav_coupon from '../assets/icons/navCoupon.svg';
-import Nav_coupon_active from '../assets/icons/navCouponActive.svg';
+import Nav_menu from '../assets/icons/navMenuV3.svg';
+import Nav_menu_active from '../assets/icons/navMenuActiveV3.svg';
+import Nav_my from '../assets/icons/navMyV3.svg';
+import Nav_my_active from '../assets/icons/navMyActiveV3.svg';
+import Nav_coupon from '../assets/icons/navCouponV3.svg';
+import Nav_coupon_active from '../assets/icons/navCouponActiveV3.svg';
 import Nav_dashboard from '../assets/icons/navDashboard.svg';
 import Nav_dashboard_active from '../assets/icons/navDashboardActive.svg';
 

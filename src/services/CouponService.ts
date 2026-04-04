@@ -1,4 +1,4 @@
-import { instance, instanceV2 } from './instance';
+import { instance } from './instance';
 
 export interface postNewCouponRequest {
   name: string;
@@ -39,39 +39,38 @@ export interface getCouponListResponse {
   code: number;
   data: Coupon[];
 }
-//couponDetail
+
+// V3 쿠폰 상세 정보
 export interface CouponDetail {
   coupon_id: number;
-  coupon_name: string;
-  coupon_description: string;
-  discount_type: 'amount' | 'percent';
+  name: string;
+  description: string | null;
+  discount_type: 'RATE' | 'AMOUNT';
   discount_value: number;
+  display_discount_value: number;
   quantity: number;
   used_count: number;
   unused_count: number;
   created_at: string;
-  total_count: number;
-  remaining_count: number;
-}
-export interface getCouponDetailResponse {
-  status: string;
-  code: number;
-  data: CouponDetail;
-}
-//
-export interface CouponCode {
-  code: string;
-  issued_to_table: string | null;
-  is_used: boolean;
-  used_at: string | null;
 }
 
-export interface getCouponCodeListResponse {
-  status: string;
-  code: number;
-  data: CouponCode[];
+// V3 쿠폰 코드
+export interface CouponCode {
+  coupon_code_id: number;
+  code: string;
+  is_used: boolean;
+  used_at: string | null;
+  created_at: string;
 }
-//
+
+export interface getCouponDetailResponse {
+  message: string;
+  data: {
+    coupon: CouponDetail;
+    codes: CouponCode[];
+  };
+}
+
 export interface deleteCouponResponse {
   status: string;
   code: number;
@@ -102,27 +101,13 @@ export const CouponService = {
     }
   },
 
-  // V3 미제공 엔드포인트 — 기존 v2 유지 (v3 API 추가 시 instanceV2 → instance로 교체)
+  // V3: GET /api/v3/django/coupon/{coupon_id}/detail/
   getCouponDetail: async (
     coupon_id: number,
   ): Promise<getCouponDetailResponse> => {
     try {
-      const response = await instanceV2.get<getCouponDetailResponse>(
-        `/api/v2/coupons/${coupon_id}/`,
-      );
-      return response.data;
-    } catch (error: any) {
-      throw error;
-    }
-  },
-
-  // V3 미제공 엔드포인트 — 기존 v2 유지 (v3 API 추가 시 instanceV2 → instance로 교체)
-  getCouponDetailCodeList: async (
-    coupon_id: number,
-  ): Promise<getCouponCodeListResponse> => {
-    try {
-      const response = await instanceV2.get<getCouponCodeListResponse>(
-        `/api/v2/coupons/${coupon_id}/codes/`,
+      const response = await instance.get<getCouponDetailResponse>(
+        `/api/v3/django/coupon/${coupon_id}/detail/`,
       );
       return response.data;
     } catch (error: any) {
@@ -142,9 +127,10 @@ export const CouponService = {
     }
   },
 
-  // V3: GET /api/v3/django/coupon/download/
+  // V3: GET /api/v3/django/coupon/download/?coupon_id=<coupon_id>
   getDownCouponExcel: async (coupon_id: number) => {
     const res = await instance.get(`/api/v3/django/coupon/download/`, {
+      params: { coupon_id },
       responseType: 'blob',
     });
 
