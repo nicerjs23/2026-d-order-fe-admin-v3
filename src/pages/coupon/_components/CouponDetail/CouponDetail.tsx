@@ -6,7 +6,6 @@ import { CouponItem } from "./CouponItem";
 import Qr from "@assets/icons/qr.svg";
 import { DeleteModal } from "@components/DeleteModal/DeleteModal";
 import { useCouponDetail } from "@pages/coupon/hooks/useCouponDetail";
-import { useCouponCode } from "@pages/coupon/hooks/useCouponCode";
 import { CouponService } from "@services/CouponService";
 import { IMAGE_CONSTANTS } from "@constants/imageConstants";
 interface Props {
@@ -15,8 +14,7 @@ interface Props {
 }
 export const CouponDetail = ({ couponId, setSelectedCouponId }: Props) => {
   const [showDelete, setShowDelete] = useState(false);
-  const { detail: detailData } = useCouponDetail(couponId);
-  const { codes } = useCouponCode(couponId);
+  const { detail: detailData, codes } = useCouponDetail(couponId);
   const handleCancel = () => {
     setShowDelete(false);
   };
@@ -51,16 +49,16 @@ export const CouponDetail = ({ couponId, setSelectedCouponId }: Props) => {
             <S.DataContainer>
               <DetailData
                 DataTitle="쿠폰명"
-                DataContent={detailData?.coupon_name}
+                DataContent={detailData?.name}
               />
               <DetailData
                 DataTitle="쿠폰 상세"
-                DataContent={detailData?.coupon_description}
+                DataContent={detailData?.description ?? undefined}
               />
               <DetailData
                 DataTitle="할인 유형"
                 DataContent={
-                  detailData?.discount_type === "amount" ? "가격" : "할인율(%)"
+                  detailData?.discount_type === "AMOUNT" ? "가격" : "할인율(%)"
                 }
               />
               <DetailData
@@ -69,7 +67,7 @@ export const CouponDetail = ({ couponId, setSelectedCouponId }: Props) => {
               />
               <DetailData
                 DataTitle="수량"
-                DataContent={`${detailData?.remaining_count}/${detailData?.total_count}`}
+                DataContent={`${detailData?.unused_count}/${detailData?.quantity}`}
               />
             </S.DataContainer>
             <S.BottomContainer>
@@ -86,7 +84,7 @@ export const CouponDetail = ({ couponId, setSelectedCouponId }: Props) => {
       </S.DetailContainer>
       <S.CouponList>
         {codes.map((c) => {
-          return <CouponItem key={c.code} code={c.code} isUsed={c.is_used} />;
+          return <CouponItem key={c.coupon_code_id} code={c.code} isUsed={c.is_used} />;
         })}
       </S.CouponList>
       {showDelete && (

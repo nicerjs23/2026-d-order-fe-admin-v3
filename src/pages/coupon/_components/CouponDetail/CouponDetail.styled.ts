@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const DetailBox = styled.div`
   display: flex;
@@ -43,7 +43,8 @@ export const DataContainer = styled.div`
   width: 100%;
   flex-direction: column;
   border-radius: 0.5rem;
-  border: 1px solid ${({ theme }) => theme.colors.Black02};
+
+  border: 1px solid rgba(192, 192, 192, 0.5);
 `;
 export const DataBlock = styled.div`
   display: flex;
@@ -51,7 +52,7 @@ export const DataBlock = styled.div`
   align-items: flex-start;
   ${({ theme }) => theme.fonts.SemiBold12}
   padding: 1rem;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.Black02};
+  border-bottom: 1px solid rgba(192, 192, 192, 0.5);
   &:last-child {
     border-bottom: none;
   }
@@ -132,8 +133,8 @@ export const Coupon = styled.div<{ isUsed?: boolean }>`
   padding: 15px 17px;
 `;
 
-export const CouponCode = styled.span<{ isUsed?: boolean }>`
+export const CouponCode = styled.span<{ $isUsed?: boolean }>`
   display: flex;
-  color: ${({ isUsed, theme }) =>
-    isUsed ? theme.colors.Black02 : theme.colors.Black01};
+  color: ${({ $isUsed, theme }) =>
+    $isUsed ? theme.colors.Black02 : theme.colors.Black01};
 `;

@@ -1,4 +1,4 @@
-import * as S from "./CouponDetail.styled";
+import * as S from './CouponDetail.styled';
 
 export const CouponItem = ({
   code,
@@ -9,7 +9,7 @@ export const CouponItem = ({
 }) => {
   return (
     <S.Coupon>
-      <S.CouponCode isUsed={isUsed}>{code}</S.CouponCode>
+      <S.CouponCode $isUsed={isUsed}>{code}</S.CouponCode>
       {isUsed ? <span>사용됨</span> : <></>}
     </S.Coupon>
   );
