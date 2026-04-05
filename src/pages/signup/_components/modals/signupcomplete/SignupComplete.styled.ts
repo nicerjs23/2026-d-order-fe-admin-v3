@@ -51,6 +51,7 @@ export const Title = styled.div`
 
 export const Image = styled.img`
   width: 144px;
+  aspect-ratio: 180/163;
 `;
 
 export const ToLogin = styled.div`
