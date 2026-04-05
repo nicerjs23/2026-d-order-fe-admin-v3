@@ -50,8 +50,8 @@ export const Image = styled.img`
 `;
 
 export const Image2 = styled.img`
-  height: 162.752px;
-  aspect-ratio: 250/162.75;
+  height: 218px;
+  aspect-ratio: 250/218;
 
   @media (max-width: 800px) {
     height: 140px;

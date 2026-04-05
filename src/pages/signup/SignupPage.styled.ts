@@ -46,12 +46,12 @@ export const ImageBox = styled.div`
 `;
 
 export const Image = styled.img`
-  width: 160px;
+  width: 170px;
 `;
 
 export const Image2 = styled.img`
-  height: 162.752px;
-  aspect-ratio: 250/162.75;
+  height: 163px;
+  aspect-ratio: 180/163;
 
   @media (max-width: 800px) {
     height: 140px;

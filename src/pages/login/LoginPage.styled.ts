@@ -39,6 +39,7 @@ export const Container2 = styled.div`
 export const ImageBox = styled.div`
   width: 100%;
   height: 100%;
+  gap: 34px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -46,13 +47,12 @@ export const ImageBox = styled.div`
 `;
 
 export const Image = styled.img`
-  width: 160px;
+  width: 170px;
 `;
 
 export const Image2 = styled.img`
-  height: 162.752px;
-  aspect-ratio: 250/162.75;
-
+  aspect-ratio: 180/163;
+  height: 163px;
   @media (max-width: 800px) {
     height: 140px;
   }

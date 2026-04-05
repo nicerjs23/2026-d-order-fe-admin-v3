@@ -54,9 +54,11 @@ import plus from '@assets/icons/add.svg';
 import ModalXIcon from '@assets/icons/modalXIcon.svg';
 import TimeIcon from '@assets/icons/timeIcon.svg';
 export const IMAGE_CONSTANTS = {
-  LOGO: '/images/Logo.png',
-  LOGO2: '/images/Logo2.png',
-  CHARACTER: '/images/Character.png',
+  LOGO: '/images/LogoV3.png',
+  LOGO2: '/images/Logo2V3.png',
+  CHARACTER: '/images/CharacterV3.png',
+  NOMALCHARACTER: '/images/NomalCharacterV3.png',
+  SIDECHARACTER: '/images/SideLogoV3.png',
 
   FOOD_PIZZA: 'https://cdn-icons-png.flaticon.com/512/6978/6978255.png',
   FOOD_STEAK: 'https://cdn-icons-png.flaticon.com/512/3480/3480618.png',
