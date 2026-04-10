@@ -197,7 +197,15 @@ export function useOrderManagementWebSocket(
       const w = wsRef.current;
       wsRef.current = null;
       setIsConnected(false);
-      if (w && w.readyState === WebSocket.OPEN) {
+      // CONNECTING(0) 상태의 WS도 닫아야 함.
+      // React 18 StrictMode에서 이중 마운트 시 첫 번째 WS가 CONNECTING 상태에서
+      // cleanup을 맞으면, 닫지 않을 경우 서버에 두 개의 consumer가 등록되고
+      // 이후 첫 번째가 닫히면서 broadcast 그룹이 꼬여 새 주문을 못 받게 됨.
+      if (
+        w &&
+        (w.readyState === WebSocket.OPEN ||
+          w.readyState === WebSocket.CONNECTING)
+      ) {
         try {
           w.close(1000, 'unmount');
         } catch {

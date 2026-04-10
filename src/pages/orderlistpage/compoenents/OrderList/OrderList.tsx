@@ -1,7 +1,6 @@
 import { Fragment } from 'react';
 import * as S from './OrderList.styled';
 
-import CategoryBox from '../categorybox/CategoryBox';
 import OrderBox, { type OrderBoxData } from '../orderbox/OrderBox';
 
 import SadAcoImage from '@assets/icons/SadAcoco.png';
@@ -11,6 +10,7 @@ export type OpenTarget = { tableIndex: number; itemIndex: number } | null;
 export type OrderListProps = {
   orders: OrderBoxData[];
   openTarget: OpenTarget;
+  onOrderItemClick: (tableIndex: number, itemIndex: number) => void;
   onOrderItemLongPress: (tableIndex: number, itemIndex: number) => void;
   onStatusSelect: (
     newStatus: import('../orderboxitem/OrderBoxItem').EditableStatus,
@@ -21,6 +21,7 @@ export type OrderListProps = {
 export default function OrderList({
   orders,
   openTarget,
+  onOrderItemClick,
   onOrderItemLongPress,
   onStatusSelect,
   onModalClose,
@@ -29,7 +30,6 @@ export default function OrderList({
 
   return (
     <S.OrderListWrapper>
-      <CategoryBox />
       {isEmpty ? (
         <S.EmptyStateWrapper>
           <S.EmptyStateImage src={SadAcoImage} alt='' />
@@ -50,6 +50,7 @@ export default function OrderList({
               items={order.items}
               tableIndex={index}
               openTarget={openTarget}
+              onOrderItemClick={onOrderItemClick}
               onOrderItemLongPress={onOrderItemLongPress}
               onStatusSelect={onStatusSelect}
               onModalClose={onModalClose}
