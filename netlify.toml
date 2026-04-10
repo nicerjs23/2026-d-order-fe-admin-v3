@@ -2,7 +2,7 @@
 # force = true: 파일이 존재하더라도 강제로 redirect 적용
 [[redirects]]
   from = "/api/v3/*"
-  to = "https://prod.dorder-api.shop/api/v3/:splat"
+  to = "https://dev.dorder-api.shop/api/v3/:splat"
   status = 200
   force = true
 
