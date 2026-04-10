@@ -10,8 +10,10 @@ import type { OrderStatus } from './compoenents/orderboxitem/OrderBoxItem.styled
 import type { EditableStatus } from './compoenents/orderboxitem/OrderBoxItem';
 import { useOrderManagementWebSocket } from './hooks/useOrderManagementWebSocket';
 import { updateOrderItemStatus } from './apis/updateOrderItemStatus';
+import type { OrderItemTargetStatus } from './utils/mapEditableStatusToApiStatus';
 import { mapEditableStatusToApiStatus } from './utils/mapEditableStatusToApiStatus';
 import { mapStatus } from './utils/mapSnapshotToOrderBoxData';
+import { getNextStatus } from './utils/getNextStatus';
 
 export default function OrderListPage() {
   const [orders, setOrders] = useState<OrderBoxData[]>([]);
@@ -29,18 +31,16 @@ export default function OrderListPage() {
   } | null>(null);
   const statusSubmittingRef = useRef(false);
 
-  const handleOrderItemLongPress = useCallback(
-    (tableIndex: number, itemIndex: number) => {
-      setOpenTarget({ tableIndex, itemIndex });
-    },
-    [],
-  );
-
-  const handleStatusSelect = useCallback(
-    async (newStatus: EditableStatus) => {
-      if (openTarget == null || statusSubmittingRef.current) return;
-
-      const { tableIndex, itemIndex } = openTarget;
+  /**
+   * 공통 상태 변경 로직: API 호출 → 낙관적 UI 업데이트
+   * handleOrderItemClick과 handleStatusSelect에서 공유
+   */
+  const executeStatusChange = useCallback(
+    async (
+      tableIndex: number,
+      itemIndex: number,
+      targetStatus: OrderItemTargetStatus,
+    ) => {
       const orderItemId = orders[tableIndex]?.items[itemIndex]?.id;
 
       if (orderItemId == null) {
@@ -48,23 +48,24 @@ export default function OrderListPage() {
         return;
       }
 
+      if (statusSubmittingRef.current) return;
       statusSubmittingRef.current = true;
+
       try {
-        const target_status = mapEditableStatusToApiStatus(newStatus);
-        console.log('[OrderList] POST /api/v3/django/order/status/', {
+        console.log('[OrderList] PATCH /api/v3/django/order/status/', {
           order_item_id: orderItemId,
-          target_status,
+          target_status: targetStatus,
         });
 
         const res = await updateOrderItemStatus({
           order_item_id: orderItemId,
-          target_status,
+          target_status: targetStatus,
         });
 
         const d = res.data;
         const nextUiStatus: OrderStatus = d?.status
           ? mapStatus(d.status)
-          : (newStatus as OrderStatus);
+          : (mapStatus(targetStatus) as OrderStatus);
 
         console.log('[OrderList] 상태 변경 응답', res);
 
@@ -92,8 +93,6 @@ export default function OrderListPage() {
             ),
           );
         }
-
-        setOpenTarget(null);
       } catch (err) {
         let message = '상태 변경에 실패했습니다.';
         if (isAxiosError(err)) {
@@ -108,7 +107,43 @@ export default function OrderListPage() {
         statusSubmittingRef.current = false;
       }
     },
-    [openTarget, orders],
+    [orders],
+  );
+
+  /** 단일 클릭: 상태 자동 전진 (조리중→조리완료, 조리완료→서빙완료) */
+  const handleOrderItemClick = useCallback(
+    async (tableIndex: number, itemIndex: number) => {
+      const item = orders[tableIndex]?.items[itemIndex];
+      if (!item) return;
+
+      const nextApiStatus = getNextStatus(item.status);
+      if (nextApiStatus == null) return; // 서빙중/서빙완료 등 전진 불가
+
+      await executeStatusChange(tableIndex, itemIndex, nextApiStatus);
+    },
+    [orders, executeStatusChange],
+  );
+
+  /** 롱프레스 → 모달 열기 */
+  const handleOrderItemLongPress = useCallback(
+    (tableIndex: number, itemIndex: number) => {
+      setOpenTarget({ tableIndex, itemIndex });
+    },
+    [],
+  );
+
+  /** 모달에서 상태 선택 (되돌리기용) */
+  const handleStatusSelect = useCallback(
+    async (newStatus: EditableStatus) => {
+      if (openTarget == null) return;
+
+      const { tableIndex, itemIndex } = openTarget;
+      const targetStatus = mapEditableStatusToApiStatus(newStatus);
+
+      setOpenTarget(null);
+      await executeStatusChange(tableIndex, itemIndex, targetStatus);
+    },
+    [openTarget, executeStatusChange],
   );
 
   const handleModalClose = useCallback(() => {
@@ -121,6 +156,7 @@ export default function OrderListPage() {
         <OrderList
           orders={orders}
           openTarget={openTarget}
+          onOrderItemClick={handleOrderItemClick}
           onOrderItemLongPress={handleOrderItemLongPress}
           onStatusSelect={handleStatusSelect}
           onModalClose={handleModalClose}

@@ -25,6 +25,7 @@ export type OrderBoxData = {
 export type OrderBoxProps = OrderBoxData & {
   tableIndex: number;
   openTarget: OpenTarget;
+  onOrderItemClick: (tableIndex: number, itemIndex: number) => void;
   onOrderItemLongPress: (tableIndex: number, itemIndex: number) => void;
   onStatusSelect: (newStatus: EditableStatus) => void;
   onModalClose: () => void;
@@ -36,6 +37,7 @@ export default function OrderBox({
   items,
   tableIndex,
   openTarget,
+  onOrderItemClick,
   onOrderItemLongPress,
   onStatusSelect,
   onModalClose,
@@ -43,7 +45,7 @@ export default function OrderBox({
   return (
     <S.OrderBoxWrapper>
       <S.OrderBoxHeader>
-        <S.OrderBoxTableNumber>{tableNumber}</S.OrderBoxTableNumber>
+        <S.OrderBoxTableNumber>T {tableNumber}</S.OrderBoxTableNumber>
         <S.OrderBoxTableTime>{tableTime}</S.OrderBoxTableTime>
       </S.OrderBoxHeader>
       <S.OrderBoxTableContent>
@@ -55,6 +57,7 @@ export default function OrderBox({
             menuName={item.menuName}
             quantity={item.quantity}
             status={item.status}
+            onClick={() => onOrderItemClick(tableIndex, itemIndex)}
             onLongPress={() => onOrderItemLongPress(tableIndex, itemIndex)}
             isModalOpen={
               openTarget !== null &&

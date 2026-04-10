@@ -31,7 +31,9 @@ export type OrderBoxItemProps = {
   menuName: string;
   quantity: number;
   status: OrderStatus;
-  /** 2초 길게 누르면 호출. 서빙중일 땐 동작하지 않음 */
+  /** 단일 클릭 시 호출 (상태 전진). 서빙중/서빙완료/서빙수락일 땐 동작하지 않음 */
+  onClick?: () => void;
+  /** 500ms 길게 누르면 호출 (되돌리기 모달). 서빙중일 땐 동작하지 않음 */
   onLongPress?: () => void;
   /** 이 항목의 상태 변경 모달이 열려 있는지 */
   isModalOpen?: boolean;
@@ -63,16 +65,27 @@ export default function OrderBoxItem({
   menuName,
   quantity,
   status,
+  onClick,
   onLongPress,
   isModalOpen,
   isAnyModalOpen,
   onStatusSelect,
   onModalClose,
 }: OrderBoxItemProps) {
+  /* 클릭 비활성: 서빙중/서빙완료/서빙수락이거나 모달이 열려 있을 때 */
+  const isClickDisabled =
+    status === '서빙중' ||
+    status === '서빙완료' ||
+    status === '서빙수락' ||
+    !onClick ||
+    !!isAnyModalOpen;
+
   const longPress = useLongPress(onLongPress ?? (() => {}), {
     delay: 500,
     disabled:
       status === '서빙중' || !onLongPress || (!!isAnyModalOpen && !isModalOpen),
+    onClick,
+    clickDisabled: isClickDisabled,
   });
 
   const statusButtonRef = useRef<HTMLDivElement>(null);
