@@ -1,6 +1,7 @@
 import * as S from "./CouponDetail.styled";
 import { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
+import { isAxiosError } from "axios";
 import { DetailData } from "./DetailData";
 import { CouponItem } from "./CouponItem";
 import Qr from "@assets/icons/qr.svg";
@@ -8,12 +9,15 @@ import { DeleteModal } from "@components/DeleteModal/DeleteModal";
 import { useCouponDetail } from "@pages/coupon/hooks/useCouponDetail";
 import { CouponService } from "@services/CouponService";
 import { IMAGE_CONSTANTS } from "@constants/imageConstants";
+import Toast from "@components/ToastMessage/Toast";
+
 interface Props {
   couponId: number;
   setSelectedCouponId: Dispatch<SetStateAction<number | null>>;
 }
 export const CouponDetail = ({ couponId, setSelectedCouponId }: Props) => {
   const [showDelete, setShowDelete] = useState(false);
+  const [toastMsg, setToastMsg] = useState("");
   const { detail: detailData, codes } = useCouponDetail(couponId);
   const handleCancel = () => {
     setShowDelete(false);
@@ -31,7 +35,12 @@ export const CouponDetail = ({ couponId, setSelectedCouponId }: Props) => {
       setShowDelete(false);
       setSelectedCouponId(null);
     } catch (err) {
-      console.error("쿠폰 삭제 실패:", err);
+      setShowDelete(false);
+      if (isAxiosError(err) && err.response?.status === 409) {
+        setToastMsg("이미 사용된 쿠폰은 삭제가 불가능합니다.");
+      } else {
+        console.error("쿠폰 삭제 실패:", err);
+      }
     }
   };
   return (
@@ -97,6 +106,13 @@ export const CouponDetail = ({ couponId, setSelectedCouponId }: Props) => {
           BtnName="쿠폰 삭제"
         />
       )}
+      <Toast
+        message={toastMsg}
+        isVisible={!!toastMsg}
+        onClose={() => setToastMsg("")}
+        icon={IMAGE_CONSTANTS.TOAST_ERROR}
+        variant="error"
+      />
     </S.DetailBox>
   );
 };

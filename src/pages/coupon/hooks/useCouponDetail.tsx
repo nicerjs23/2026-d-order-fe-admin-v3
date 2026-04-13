@@ -17,7 +17,7 @@ export const useCouponDetail = (couponId: number) => {
 
   useEffect(() => {
     fetchDetail();
-  }, []);
+  }, [fetchDetail]);
 
   return { detail, codes, refetch: fetchDetail };
 };

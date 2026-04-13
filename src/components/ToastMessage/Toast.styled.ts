@@ -9,7 +9,7 @@ const fadeAnimation = keyframes`
     100% { opacity: 0; transform: translate(-50%, -60%); }
 `;
 
-export const ToastWrapper = styled.div`
+export const ToastWrapper = styled.div<{ $variant?: 'default' | 'error' }>`
     position: fixed;
     top: 8%;
     left: 50%;
@@ -18,10 +18,10 @@ export const ToastWrapper = styled.div`
 
     display: inline-flex;
     padding: 16px;
-    flex-direction: column;
-    align-items: center; /* 텍스트도 중앙 정렬 */
+    flex-direction: row;
+    align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 8px;
     box-sizing: border-box;
 
     width: fit-content;
@@ -29,11 +29,18 @@ export const ToastWrapper = styled.div`
     min-height: 3.25rem;
 
     border-radius: 8px;
-    background: var(--Main-Orange-Orange_01, #FF6E3F);
-    
+    background: ${({ $variant, theme }) =>
+        $variant === 'error' ? theme.colors.Black02 : 'var(--Main-Orange-Orange_01, #FF6E3F)'};
+
     color: #FFF;
-    ${({ theme }) => theme.fonts.Bold14}; 
+    ${({ theme }) => theme.fonts.Bold14};
 
     animation: ${fadeAnimation} 3s ease-in-out forwards;
-    pointer-events: none; 
+    pointer-events: none;
+`;
+
+export const ToastIcon = styled.img`
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
 `;
