@@ -259,6 +259,29 @@ export function isAdminOrderCancelledMessage(
   );
 }
 
+/** 테이블 초기화: 초기화된 테이블 번호 목록 + 남은 주문 전체 목록 */
+export const ADMIN_TABLE_RESET = 'ADMIN_TABLE_RESET';
+
+export interface AdminTableResetMessage {
+  type: typeof ADMIN_TABLE_RESET;
+  data: {
+    table_nums: number[];
+    count: number;
+    total_sales?: number;
+    orders: AdminOrderSnapshotOrderRow[];
+  };
+}
+
+export function isAdminTableResetMessage(msg: unknown): msg is AdminTableResetMessage {
+  const m = msg as AdminTableResetMessage;
+  return (
+    typeof msg === 'object' &&
+    msg !== null &&
+    m.type === ADMIN_TABLE_RESET &&
+    Array.isArray(m.data?.table_nums)
+  );
+}
+
 /** 메뉴별 집계: 음식/음료 수량 집계 (서버가 ADMIN_MENU_AGGREGATION 또는 MENU_AGGREGATION 로 전송) */
 export const MENU_AGGREGATION = 'MENU_AGGREGATION';
 

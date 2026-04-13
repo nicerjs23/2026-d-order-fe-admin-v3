@@ -13,6 +13,7 @@ import {
   isAdminOrderCompletedMessage,
   isAdminOrderCancelledMessage,
   isMenuAggregationMessage,
+  isAdminTableResetMessage,
   getOrderWsErrorInfo,
 } from '../types/orderManagementWs';
 import UserService from '@services/UserService';
@@ -100,6 +101,12 @@ export function useOrderManagementWebSocket(
             setOrdersRef.current((prev) => applyOrderCompleted(prev, msg.data));
           } else if (isAdminOrderCancelledMessage(msg)) {
             setOrdersRef.current((prev) => applyOrderCancelled(prev, msg.data));
+          } else if (isAdminTableResetMessage(msg)) {
+            console.log(
+              '[OrderManagementWS] ADMIN_TABLE_RESET → 초기화된 테이블:', msg.data.table_nums,
+            );
+            const next = mapSnapshotToOrderBoxData(msg.data.orders);
+            setOrdersRef.current(next);
           } else if (
             isMenuAggregationMessage(msg) &&
             onMenuAggregationRef.current
