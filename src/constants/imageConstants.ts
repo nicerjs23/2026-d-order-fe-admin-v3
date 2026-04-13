@@ -53,6 +53,7 @@ import plus from '@assets/icons/add.svg';
 
 import ModalXIcon from '@assets/icons/modalXIcon.svg';
 import TimeIcon from '@assets/icons/timeIcon.svg';
+import ToastError from '@assets/icons/toastError.svg';
 export const IMAGE_CONSTANTS = {
   LOGO: '/images/LogoV3.png',
   LOGO2: '/images/Logo2V3.png',
@@ -123,4 +124,5 @@ export const IMAGE_CONSTANTS = {
 
   ModalXIcon: ModalXIcon,
   TimeIcon: TimeIcon,
+  TOAST_ERROR: ToastError,
 };
