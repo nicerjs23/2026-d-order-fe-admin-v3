@@ -1,14 +1,14 @@
 import * as S from './BellModal.styled';
 import { createPortal } from 'react-dom';
-import { dummyNotifications } from '../dummy/dummyNotifications';
+import { Notification } from '../dummy/dummyNotifications';
 import { IMAGE_CONSTANTS } from '@constants/imageConstants';
 
 interface BellModalProps {
   $active: boolean;
   onClose: () => void;
+  notifications: Notification[];
 }
 
-// 시간 차이를 "X분 전" 형태로 변환
 const getTimeAgo = (date: Date): string => {
   const diff = Math.floor((Date.now() - date.getTime()) / 1000);
   if (diff < 60) return `${diff}초 전`;
@@ -19,24 +19,21 @@ const getTimeAgo = (date: Date): string => {
 };
 
 // 정렬: 미처리(오래된 순) → 처리중
-const getSortedNotifications = () =>
-  [...dummyNotifications].sort((a, b) => {
+const getSorted = (list: Notification[]) =>
+  [...list].sort((a, b) => {
     if (a.isProcessed !== b.isProcessed) return a.isProcessed ? 1 : -1;
     if (!a.isProcessed && !b.isProcessed)
       return a.createdAt.getTime() - b.createdAt.getTime();
     return 0;
   });
 
-const BellModal = ({ $active, onClose }: BellModalProps) => {
-  const sorted = getSortedNotifications();
+const BellModal = ({ $active, onClose, notifications }: BellModalProps) => {
+  const sorted = getSorted(notifications);
 
   return createPortal(
     <>
       <S.Overlay $active={$active} onClick={(e) => { e.stopPropagation(); onClose(); }} />
-      <S.BellModalWrapper
-        $active={$active}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <S.BellModalWrapper $active={$active} onClick={(e) => e.stopPropagation()}>
         <S.ModalHeader>
           <S.ModalTitle>테이블 요청 현황</S.ModalTitle>
           <S.CloseButton onClick={onClose}>

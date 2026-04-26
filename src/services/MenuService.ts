@@ -19,6 +19,7 @@ export interface MenuListItemV3 {
   stock: number;
   is_soldout: boolean;
   is_fixed: boolean;
+  set_items?: { menu_id: number; quantity: number; base_price: number; stock: number }[];
 }
 
 export interface MenuListResponseV3 {
@@ -74,7 +75,7 @@ function mapV3MenuListToBoothMenuData(res: MenuListResponseV3): BoothMenuData {
         set_price: item.price,
         origin_price: item.price,
         is_sold_out: item.is_soldout,
-        menu_items: [],
+        menu_items: (item.set_items ?? []).map((si) => ({ menu_id: si.menu_id, quantity: si.quantity })),
       });
     }
   }
@@ -93,6 +94,7 @@ const MenuService = {
       const response = await instance.get<MenuListResponseV3>(
         '/api/v3/django/booth/menu-list/',
       );
+      console.log('메뉴 리스트 응답:', response.data);
       return mapV3MenuListToBoothMenuData(response.data);
     } catch (error) {
       throw error;
