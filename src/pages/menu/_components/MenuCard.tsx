@@ -5,6 +5,8 @@ import MenuDeleteModal from "../../modal_test_view/_components/MenuDeleteModal";
 import { BoothMenuData, Menu } from "../Type/Menu_type";
 import MenuService from "../../../services/MenuService";
 import EditMenuModal from "@pages/modal_test_view/_components/EditMenuModal";
+import { isAxiosError } from "axios";
+import Toast from "@components/ToastMessage/Toast";
 
 interface MenuCardProps {
   menu: Menu;
@@ -15,6 +17,7 @@ interface MenuCardProps {
 const MenuCard = ({ menu, onSuccess, boothMenuData }: MenuCardProps) => {
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [toastMsg, setToastMsg] = useState("");
 
   const isSoldOut = menu.is_sold_out;
 
@@ -39,9 +42,14 @@ const MenuCard = ({ menu, onSuccess, boothMenuData }: MenuCardProps) => {
     try {
       await MenuService.deleteMenu(menu.menu_id);
       setShowDeleteModal(false);
-      onSuccess((prev) => !prev); // 목록 새로고침
+      onSuccess((prev) => !prev);
     } catch (error) {
-      alert("메뉴 삭제에 실패했습니다.");
+      setShowDeleteModal(false);
+      if (isAxiosError(error) && error.response?.status === 400) {
+        setToastMsg("주문이 들어가 있는 메뉴는 삭제가 불가능합니다!");
+      } else {
+        setToastMsg("메뉴 삭제에 실패했습니다!");
+      }
     }
   };
 
@@ -123,6 +131,14 @@ const MenuCard = ({ menu, onSuccess, boothMenuData }: MenuCardProps) => {
           onDelete={handleConfirmDelete}
         />
       )}
+
+      <Toast
+        message={toastMsg}
+        isVisible={!!toastMsg}
+        onClose={() => setToastMsg("")}
+        icon={IMAGE_CONSTANTS.TOAST_ERROR}
+        variant="error"
+      />
     </>
   );
 };

@@ -8,9 +8,9 @@ export const CouponItem = ({
   isUsed: boolean;
 }) => {
   return (
-    <S.Coupon>
+    <S.Coupon $isUsed={isUsed}>
       <S.CouponCode $isUsed={isUsed}>{code}</S.CouponCode>
-      {isUsed ? <span>사용됨</span> : <></>}
+      {isUsed && <S.UsedBadge>사용됨</S.UsedBadge>}
     </S.Coupon>
   );
 };

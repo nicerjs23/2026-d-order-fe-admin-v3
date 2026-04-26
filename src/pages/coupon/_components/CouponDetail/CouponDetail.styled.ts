@@ -121,16 +121,23 @@ export const CouponList = styled.div`
   margin-top: 2rem;
 `;
 
-export const Coupon = styled.div<{ isUsed?: boolean }>`
+export const Coupon = styled.div<{ $isUsed?: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
 
   ${({ theme }) => theme.fonts.SemiBold16};
   min-width: 270px;
-  border: 1px solid ${({ theme }) => theme.colors.Black02};
+  border: 1px solid ${({ $isUsed, theme }) =>
+    $isUsed ? theme.colors.Black02 : theme.colors.Black02};
   border-radius: 20px;
   padding: 15px 17px;
+  opacity: ${({ $isUsed }) => ($isUsed ? 0.45 : 1)};
+`;
+
+export const UsedBadge = styled.span`
+  color: ${({ theme }) => theme.colors.Black02};
+  ${({ theme }) => theme.fonts.SemiBold14};
 `;
 
 export const CouponCode = styled.span<{ $isUsed?: boolean }>`
