@@ -66,22 +66,20 @@ export const useTablesWS = (options: UseTablesWSOptions = {}) => {
             };
 
             socket.onclose = (event) => {
-                // 1006 에러 등의 경우 디버깅을 위해 코드와 이유, 정상 종료 여부를 상세히 출력
                 console.log(
                     `[WS:Tables] ⚪ 연결 종료. Code: ${event.code}, Reason: '${event.reason || "없음"}', Clean: ${event.wasClean}`
                 );
 
-                // 4001(인증 실패)가 아니면 3초 후 자동 재연결 시도
                 if (isMounted && event.code !== 4001) {
                     console.log("[WS:Tables] ⏳ 3초 후 재연결을 시도합니다...");
                     reconnectTimeoutRef.current = window.setTimeout(connect, 3000);
                 } else if (event.code === 4001) {
-                    console.error("[WS:Tables] 🚨 인증 실패(4001)로 인해 재연결을 시도하지 않습니다.");
+                    console.error("[WS:Tables] 🚨 인증 실패(4001)로 인해 재연결을 시도하지 않습니다. (쿠키 만료 등)");
                 }
             };
 
             socket.onerror = (error) => {
-                console.error("[WS:Tables] 🔴 소켓 에러 발생! (1006인 경우 Nginx 설정이나 토큰 문제일 확률 높음):", error);
+                console.error("[WS:Tables] 🔴 소켓 에러 발생!:", error);
             };
         };
 
@@ -96,7 +94,7 @@ export const useTablesWS = (options: UseTablesWSOptions = {}) => {
                 wsRef.current = null;
             }
         };
-    }, []); // 의존성 배열 비움 (마운트 시 1회 연결)
+    }, []); 
 
     return { socket: wsRef.current };
 };
