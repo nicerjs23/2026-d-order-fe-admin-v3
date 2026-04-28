@@ -1,5 +1,5 @@
 import * as S from './CommonInput.styled';
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 
 import { SIGNUP_CONSTANTS } from '@pages/signup/_constants/signupConstants';
 
@@ -23,19 +23,10 @@ const CommonInput = ({
   const isPasswordType = type === 'password';
   const effectiveType = isPasswordType && showPassword ? 'text' : type;
 
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setValue(newValue);
-
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
-
-    debounceRef.current = setTimeout(() => {
-      onValueSubmit(newValue);
-    }, 300);
+    onValueSubmit(newValue);
   };
 
   return (

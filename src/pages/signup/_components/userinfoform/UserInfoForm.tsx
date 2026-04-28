@@ -52,24 +52,20 @@ const UserInfoForm = ({
     setPwSuccess('사용 가능한 비밀번호예요.');
   }, [password]);
 
-  // --- 3) 비밀번호 확인: 즉시 일치검사 ---
+  // --- 비밀번호 확인: 3단계일 때만 일치 검사 (userStage만의 별도 초기화 effect 없음 →
+  //     2→3 진입·폼 재마운트 시 성공 메시지가 바로 지워지던 문제 방지)
   useEffect(() => {
     setConfirmPwError(null);
     setConfirmPwSuccess(null);
 
+    if (userStage !== 3) return;
     if (!confirmPassword) return;
     if (password !== confirmPassword) {
       setConfirmPwError('비밀번호가 일치하지 않아요.');
       return;
     }
     setConfirmPwSuccess('비밀번호가 일치해요.');
-  }, [password, confirmPassword]);
-
-  // 단계 전환 시, 다음 단계 입력에 대한 메시지만 유지하도록(기존 로직 유지)
-  useEffect(() => {
-    setConfirmPwError(null);
-    setConfirmPwSuccess(null);
-  }, [userStage]);
+  }, [password, confirmPassword, userStage]);
 
   // 현재 단계 유효 여부
   const isIdValid = !!idSuccess && !idError;
@@ -85,16 +81,14 @@ const UserInfoForm = ({
     if (userStage === 1) {
       if (!isIdValid) return;
       setUserStage(2);
-      resetIdCheck();
     } else if (userStage === 2) {
       if (!isPwValid) return;
       setUserStage(3);
-      setPwSuccess(null);
     } else if (userStage === 3) {
       if (!isConfirmValid) return;
       onNext();
     }
-  }, [userStage, setUserStage, onNext, isIdValid, isPwValid, isConfirmValid, resetIdCheck]);
+  }, [userStage, setUserStage, onNext, isIdValid, isPwValid, isConfirmValid]);
 
   return (
     <S.Wrapper>
@@ -111,7 +105,6 @@ const UserInfoForm = ({
           onChange('userId', '');
           resetIdCheck();
         }}
-        onResetValidation={resetIdCheck}
         isVisible={userStage >= 1}
         disabled={userStage !== 1}
       />
@@ -130,10 +123,6 @@ const UserInfoForm = ({
           setPwError(null);
           setPwSuccess(null);
         }}
-        onResetValidation={() => {
-          setPwError(null);
-          setPwSuccess(null);
-        }}
         isVisible={userStage >= 2}
         disabled={userStage !== 2}
       />
@@ -149,10 +138,6 @@ const UserInfoForm = ({
         helperText="비밀번호를 동일하게 입력해 주세요."
         onClear={() => {
           onChange('confirmPassword', '');
-          setConfirmPwError(null);
-          setConfirmPwSuccess(null);
-        }}
-        onResetValidation={() => {
           setConfirmPwError(null);
           setConfirmPwSuccess(null);
         }}

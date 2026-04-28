@@ -81,7 +81,7 @@ export const useSignupPage = (
         });
       }
       localStorage.setItem('Booth-ID', String(booth_id));
-      navigate(ROUTE_PATHS.HOME);
+      // 화면 이동은 PaymentInfoForm → SignupComplete 모달에서 처리 (여기서 navigate 하면 모달이 뜨기 전에 이탈함)
       return true;
     } catch (err: unknown) {
       if (err && typeof err === 'object' && 'response' in err) {
@@ -107,7 +107,7 @@ export const useSignupPage = (
       }
       return false;
     }
-  }, [formData, mockSignupSubmit, navigate]);
+  }, [formData, mockSignupSubmit]);
 
   const goNext = useCallback(() => {
     setStep((prev) => (prev < Step.COMPLETE ? ((prev + 1) as Step) : prev));
