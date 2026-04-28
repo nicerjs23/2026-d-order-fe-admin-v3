@@ -171,9 +171,8 @@ const QuantityWrapper = styled.div`
         background-color: #ff6e3f4d;
 
         &:disabled {
-        background-color: ${({ theme }) => theme.colors.Black02};
-        color: ${({ theme }) => theme.colors.Black01};
-        opacity: 0.4;
+        background-color: #C0C0C033;
+        color: #000000;
         cursor: not-allowed;
         }
     }

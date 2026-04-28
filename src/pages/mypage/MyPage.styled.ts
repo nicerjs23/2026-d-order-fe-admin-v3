@@ -200,7 +200,7 @@ export const QrContainer = styled.div`
     gap: 0.375rem;
     cursor: pointer;
     span {
-        color: ${({ theme }) => theme.colors.Black02};
+        color: ${({ theme }) => theme.colors.Gray02};
         ${({ theme }) => theme.fonts.Bold14};
     }
 `;
@@ -215,7 +215,7 @@ export const LogoutContainer = styled.div`
     gap: 0.375rem;
     cursor: pointer;
     span {
-        color: ${({ theme }) => theme.colors.Black02};
+        color: ${({ theme }) => theme.colors.Gray02};
         ${({ theme }) => theme.fonts.Bold14};
     }
 `;
