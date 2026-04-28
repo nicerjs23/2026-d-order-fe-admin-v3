@@ -116,13 +116,16 @@ const SideBar = () => {
         {selectedTables.length > 0 && (
           <S.ActionContainer>
             <S.ActionButton onClick={handleResetClick}>
-              <img src={IMAGE_CONSTANTS.Broom_Icon}></img>
+              <img src={IMAGE_CONSTANTS.Broom_Icon} alt="초기화" />
               초기화
             </S.ActionButton>
-            <S.ActionButton onClick={handleMergeClick}>
-              <img src={IMAGE_CONSTANTS.Merge_Icon}></img>
-              병합
-            </S.ActionButton>
+
+            {selectedTables.length >= 2 && (
+              <S.ActionButton onClick={handleMergeClick}>
+                <img src={IMAGE_CONSTANTS.Merge_Icon} alt="병합" />
+                병합
+              </S.ActionButton>
+            )}
           </S.ActionContainer>
         )}
       </S.SideBarWrapper>

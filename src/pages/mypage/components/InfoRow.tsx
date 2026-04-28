@@ -13,7 +13,7 @@ const InfoRowComponent = ({
         <Label>{label}</Label>
         <ContentContainer>{children}</ContentContainer>
       </InfoRow>
-      <Divider />
+      {/* <Divider /> */}
     </>
   );
 };
