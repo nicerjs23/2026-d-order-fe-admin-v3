@@ -50,7 +50,7 @@ export const Container = styled.div`
     display: flex;
     flex-direction: column;
     border: 1px solid rgba(192, 192, 192, 0.50);
-    border-radius: 0.625rem;
+    border-radius: 0.625rem 0.625rem 0 0;
     background-color: #FFFFFF;
 `;
 
@@ -190,8 +190,9 @@ export const CancelButton = styled.button`
 export const BottomContainer = styled.div`
     display: flex;
     justify-content: flex-end;
-    margin-top: 1rem;
-    gap: 1.25rem;
+    margin-top: 1.5rem;
+    gap: 1.4rem;
+    padding-right: 1rem;
 `;
 
 export const QrContainer = styled.div`
@@ -200,7 +201,7 @@ export const QrContainer = styled.div`
     gap: 0.375rem;
     cursor: pointer;
     span {
-        color: ${({ theme }) => theme.colors.Black02};
+        color: ${({ theme }) => theme.colors.Gray02};
         ${({ theme }) => theme.fonts.Bold14};
     }
 `;
@@ -215,10 +216,17 @@ export const LogoutContainer = styled.div`
     gap: 0.375rem;
     cursor: pointer;
     span {
-        color: ${({ theme }) => theme.colors.Black02};
+        color: ${({ theme }) => theme.colors.Gray02};
         ${({ theme }) => theme.fonts.Bold14};
     }
 `;
 export const LogoutImg = styled.img`
     width: 1.125rem;
+`;
+
+export const Divider = styled.div`
+    display: flex;
+    width: 100%;
+    height: 1px;
+    background-color: rgba(192, 192, 192, 0.5);
 `;

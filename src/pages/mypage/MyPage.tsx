@@ -203,23 +203,23 @@ const MyPage = () => {
             value={my.name} editing={editingName} input={storeName} setInput={setStoreName}
             onEdit={() => startEdit('storeName')} onConfirm={() => confirmEdit('storeName')} onCancel={() => cancelEdit('storeName')}
           />
-
+          <S.Divider />
           {/* ✅ 다시 ReadonlyField로 원상복구! */}
           <ReadonlyField label="테이블 수" value={my.table_max_cnt} />
-
+          <S.Divider />
           <SeatFeeField
             editing={editingSeat} seatTypeLabel={seatTypeLabel} setSeatTypeLabel={setSeatTypeLabel} amount={seatAmountLocal} setAmount={setSeatAmountLocal}
             readonlyType={my.seat_type} readonlyPP={my.seat_fee_person} readonlyPT={my.seat_fee_table}
             isDropdownOpen={isSeatDropdownOpen} setDropdownOpen={setIsSeatDropdownOpen}
             onEdit={() => startEdit('seat')} onConfirm={() => confirmEdit('seat')} onCancel={() => cancelEdit('seat')}
           />
-
+          <S.Divider />
           <TimeLimitField
             editing={editingTime} valueLabel={timeLabelLocal} setValueLabel={setTimeLabelLocal}
             isDropdownOpen={isTimeDropdownOpen} setDropdownOpen={setIsTimeDropdownOpen} readonlyValueLabel={hoursToLabel(my.table_limit_hours)}
             onEdit={() => startEdit('time')} onConfirm={() => confirmEdit('time')} onCancel={() => cancelEdit('time')}
           />
-
+          <S.Divider /> 
           <AccountField
             editing={editingAccount} bank={selectedBank} setBank={setSelectedBank} owner={owner} setOwner={setOwner} account={account} setAccount={setAccount}
             isDropdownOpen={isBankDropdownOpen} setDropdownOpen={setIsBankDropdownOpen} readonlyBank={my.bank} readonlyOwner={my.depositor} readonlyAccount={my.account}

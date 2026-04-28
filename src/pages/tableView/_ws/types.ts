@@ -1,57 +1,62 @@
 // tableView/_ws/types.ts
+export type TableWSEventType =
+    | "connection_established"
+    | "merge_table"
+    | "reset_table"
+    | "enter_table"
+    | "order_update"
+    | "ERROR";
 
-// ── 공통 응답 구조 ──
-export interface BaseWSPayload {
-    type: string;
+export interface BaseWSPayload<TType extends TableWSEventType, TData> {
+    type: TType;
     timestamp: string;
     message?: string;
+    data: TData;
 }
 
-// ── 이벤트별 데이터 타입 ──
-export interface WsConnectionEstablished extends BaseWSPayload {
-    type: "connection_established";
-    data: { booth_id?: number };
-}
+export type WsConnectionEstablished = BaseWSPayload<
+    "connection_established",
+    {
+        booth_id: number;
+    }
+>;
 
-export interface WsMergeTable extends BaseWSPayload {
-    type: "merge_table";
-    data: {
+export type WsMergeTable = BaseWSPayload<
+    "merge_table",
+    {
         table_nums: number[];
         representative_table: number;
         count: number;
-    };
-}
+    }
+>;
 
-export interface WsResetTable extends BaseWSPayload {
-    type: "reset_table";
-    data: {
+export type WsResetTable = BaseWSPayload<
+    "reset_table",
+    {
         table_nums: number[];
         count: number;
-    };
-}
+    }
+>;
 
-export interface WsEnterTable extends BaseWSPayload {
-    type: "enter_table";
-    data: {
+export type WsEnterTable = BaseWSPayload<
+    "enter_table",
+    {
         table_num: number;
         started_at: string;
-    };
-}
+    }
+>;
 
-export interface WsOrderUpdate extends BaseWSPayload {
-    type: "order_update";
-    data: any; // 명세 확정 시 구체화 필요
-}
+// 백엔드 상세 스펙 확정 전까지 unknown으로 안전하게 유지
+export type WsOrderUpdate = BaseWSPayload<"order_update", unknown>;
 
-export interface WsError extends BaseWSPayload {
-    type: "ERROR";
-    data: {
+export type WsError = BaseWSPayload<
+    "ERROR",
+    {
         code: string;
         message: string;
-    };
-}
+    }
+>;
 
-// 전체 유니온 타입
 export type TableWSPayload =
     | WsConnectionEstablished
     | WsMergeTable

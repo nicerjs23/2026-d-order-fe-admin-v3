@@ -177,7 +177,7 @@ export const CancleButton = styled.button`
     justify-content: center;
     align-items: center;
     gap: 0.28rem;
-    background-color: ${({theme}) => theme.colors.Orange02};
+    background-color: ${({theme}) => theme.colors.Orange00};
     color: ${({theme}) => theme.colors.Orange01};
     ${({ theme }) => css(theme.fonts.SemiBold14)};
 
