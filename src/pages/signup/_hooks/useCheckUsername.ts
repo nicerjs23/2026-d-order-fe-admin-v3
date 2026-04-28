@@ -39,6 +39,7 @@ export function useCheckUsername(
       return;
     }
 
+    // 형식 통과: 중복 결과만 디바운스 (그 전에는 성공/중복 메시지 없음)
     setIdError(null);
     setIdSuccess(null);
 
