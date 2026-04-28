@@ -17,7 +17,6 @@ type InputProps = {
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   onClear?: () => void;
   isVisible?: boolean;
-  onResetValidation?: () => void;
   forceShowPasswordWhenSuccess?: boolean;
 };
 
@@ -34,7 +33,6 @@ const CommonInput = ({
   onKeyDown,
   onClear,
   isVisible = true,
-  onResetValidation,
   forceShowPasswordWhenSuccess = false,
 }: InputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -49,6 +47,11 @@ const CommonInput = ({
   const effectiveType = isPasswordType && showPassword ? 'text' : type;
 
   const isValidated = hasError || hasSuccess;
+  const showClear = !isValidated && focused && hasValue;
+  /** 포커스+미검증일 때는 클리어만; 그 외 비밀번호는 값이 있으면 항상 토글(성공·오류 아이콘과 동시 표시) */
+  const showPasswordToggle =
+    isPasswordType && hasValue && !(focused && !isValidated);
+  const wideTrailingPadding = showPasswordToggle && (hasError || hasSuccess);
 
   useEffect(() => {
     if (hasSuccess && forceShowPasswordWhenSuccess) {
@@ -58,19 +61,18 @@ const CommonInput = ({
 
   const handleFocus = useCallback(() => {
     setFocused(true);
-    onResetValidation?.();
-  }, [onResetValidation]);
+  }, []);
   const handleBlur = useCallback(() => setFocused(false), []);
   const togglePassword = useCallback(
     () => setShowPassword((prev) => !prev),
-    []
+    [],
   );
   const handleClearMouseDown = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
       onClear?.();
     },
-    [onClear]
+    [onClear],
   );
 
   return (
@@ -92,23 +94,33 @@ const CommonInput = ({
           disabled={disabled}
           $error={hasError}
           $success={hasSuccess}
+          $wideTrailing={wideTrailingPadding}
           onKeyDown={onKeyDown}
           enterKeyHint="next"
         />
-        {!isValidated && focused && hasValue && (
+        {showClear && (
           <S.Icon
             src={SIGNUP_CONSTANTS.INPUT_IMAGE.VECTOR}
             alt="Clear"
             onMouseDown={handleClearMouseDown}
+            $cursor="pointer"
           />
         )}
         {hasError && (
-          <S.Icon src={SIGNUP_CONSTANTS.INPUT_IMAGE.ERROR} alt="Error" />
+          <S.Icon
+            src={SIGNUP_CONSTANTS.INPUT_IMAGE.ERROR}
+            alt="Error"
+            $right={showPasswordToggle ? '12px' : undefined}
+          />
         )}
         {hasSuccess && (
-          <S.Icon src={SIGNUP_CONSTANTS.INPUT_IMAGE.CHECK} alt="Success" />
+          <S.Icon
+            src={SIGNUP_CONSTANTS.INPUT_IMAGE.CHECK}
+            alt="Success"
+            $right={showPasswordToggle ? '12px' : undefined}
+          />
         )}
-        {!focused && !isValidated && isPasswordType && hasValue && (
+        {showPasswordToggle && (
           <S.Icon
             src={
               showPassword
@@ -117,6 +129,9 @@ const CommonInput = ({
             }
             alt="Toggle visibility"
             onClick={togglePassword}
+            /* 유효성 아이콘과 함께 있을 때만 안쪽(48px). 로그인처럼 눈만 있을 때는 기본 12px */
+            $right={wideTrailingPadding ? '48px' : undefined}
+            $cursor="pointer"
           />
         )}
       </S.InputWrapper>

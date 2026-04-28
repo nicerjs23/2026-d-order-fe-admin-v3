@@ -7,6 +7,7 @@ import { useStatusModalAnchor } from './useStatusModalAnchor';
 import StatusChangeModal from '../StatusChangeModal/StatusChangeModal';
 import type { EditableStatus } from '../StatusChangeModal/StatusChangeModal.types';
 import * as MS from '../StatusChangeModal/StatusChangeModal.styled';
+import { IMAGE_CONSTANTS } from '@constants/imageConstants';
 
 export type { EditableStatus } from '../StatusChangeModal/StatusChangeModal.types';
 
@@ -91,7 +92,7 @@ export default function OrderBoxItem({
   const statusButtonRef = useRef<HTMLDivElement>(null);
   const { anchorRect, placement } = useStatusModalAnchor(
     statusButtonRef,
-    !!isModalOpen
+    !!isModalOpen,
   );
 
   return (
@@ -103,12 +104,10 @@ export default function OrderBoxItem({
             {imageUrl ? (
               <img src={imageUrl} alt="" />
             ) : (
-              <div
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  background: '#E0E0E0',
-                }}
+              <img
+                src={IMAGE_CONSTANTS.LOGOIMAGE}
+                alt="기본 아코 이미지"
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
               />
             )}
           </S.ItemImage>

@@ -24,14 +24,19 @@ export const InputWrapper = styled.div`
   align-items: center;
 `;
 
-export const StyledInput = styled.input<{ $error: boolean; $success: boolean }>`
+export const StyledInput = styled.input<{
+  $error: boolean;
+  $success: boolean;
+  $wideTrailing?: boolean;
+}>`
   ${({ theme }) => theme.fonts.SemiBold16};
   color: ${({ theme }) => theme.colors.Black01};
   width: 100%;
   min-width: 8rem;
   box-sizing: border-box;
   padding: 1rem;
-  padding-right: 2.25rem;
+  padding-right: ${({ $wideTrailing }) =>
+    $wideTrailing ? '4.25rem' : '2.25rem'};
   border: 1px solid
     ${({ $error, $success, theme }) =>
       $error
@@ -60,7 +65,7 @@ export const StyledInput = styled.input<{ $error: boolean; $success: boolean }>`
   }
 
   &:disabled {
-    background-color: #f5f5f5;
+    background-color: ${({ theme }) => theme.colors.White};
   }
 `;
 
@@ -75,18 +80,10 @@ export const Helper = styled.div`
   color: ${({ theme }) => theme.colors.Focused};
 `;
 
-export const Icon = styled.img`
+export const Icon = styled.img<{ $right?: string; $cursor?: string }>`
   position: absolute;
-  right: 12px;
+  right: ${({ $right }) => $right || '12px'};
   width: 24px;
-  cursor: pointer;
   pointer-events: auto;
-`;
-
-export const Icon2 = styled.img`
-  position: absolute;
-  right: 48px;
-  width: 24px;
-  cursor: pointer;
-  pointer-events: auto;
+  cursor: ${({ $cursor }) => $cursor || 'default'};
 `;
