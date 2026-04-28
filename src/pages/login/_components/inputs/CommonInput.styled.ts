@@ -47,7 +47,7 @@ export const StyledInput = styled.input`
   }
 
   &:disabled {
-    background-color: #f5f5f5;
+    background-color: ${({ theme }) => theme.colors.White};
   }
 `;
 
