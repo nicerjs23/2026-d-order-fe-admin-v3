@@ -57,7 +57,7 @@ export const useSignupPage = (
     }
     try {
       const seatType = formData.tableFeePolicy as 'PT' | 'PP' | 'NO';
-      const response = await UserService.postSignupV3({
+      await UserService.postSignupV3({
         username: formData.userId,
         password: formData.password,
         booth_data: {
@@ -72,16 +72,7 @@ export const useSignupPage = (
           table_limit_hours: Number(formData.maxTime),
         },
       });
-
-      const { booth_id } = response.data;
-      if (!response.token?.access) {
-        await UserService.loginV3({
-          username: formData.userId,
-          password: formData.password,
-        });
-      }
-      localStorage.setItem('Booth-ID', String(booth_id));
-      // 화면 이동은 PaymentInfoForm → SignupComplete 모달에서 처리 (여기서 navigate 하면 모달이 뜨기 전에 이탈함)
+      // 회원가입 성공 시: 추가 호출(자동 로그인)이나 로컬 저장 없이 완료 모달만 노출
       return true;
     } catch (err: unknown) {
       if (err && typeof err === 'object' && 'response' in err) {
