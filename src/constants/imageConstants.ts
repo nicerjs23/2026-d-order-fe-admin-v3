@@ -61,7 +61,7 @@ export const IMAGE_CONSTANTS = {
   LOGO: '/images/LogoV3.png',
   LOGO2: '/images/Logo2V3.png',
   CHARACTER: '/images/CharacterV3.png',
-  NOMALCHARACTER: '/images/NomalCharacterV3.png',
+  NOMALCHARACTER: LOGOIMAGE,
   SIDECHARACTER: '/images/SideLogoV3.png',
 
   FOOD_PIZZA: 'https://cdn-icons-png.flaticon.com/512/6978/6978255.png',

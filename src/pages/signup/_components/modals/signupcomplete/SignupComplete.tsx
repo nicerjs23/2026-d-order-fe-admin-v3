@@ -22,7 +22,7 @@ const SignupComplete = () => {
           </S.LogoWrapper>
         </S.ModalTop>
         <S.ToLogin onClick={() => navigate(ROUTE_PATHS.LOGIN)}>
-          로그인 하러 가기
+          로그인하러 가기
         </S.ToLogin>
       </S.ModalWrap>
     </S.Wrapper>
