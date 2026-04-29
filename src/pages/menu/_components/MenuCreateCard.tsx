@@ -1,8 +1,8 @@
-import styled from "styled-components";
-import { IMAGE_CONSTANTS } from "@constants/imageConstants";
-import { SetStateAction, useState } from "react";
-import MenuModal from "../../modal_test_view/_components/MenuModal";
-import { BoothMenuData } from "../Type/Menu_type";
+import styled from 'styled-components';
+import { IMAGE_CONSTANTS } from '@constants/imageConstants';
+import { SetStateAction, useState } from 'react';
+import MenuModal from '../../modal_test_view/_components/MenuModal';
+import { BoothMenuData } from '../Type/Menu_type';
 
 interface MenuCreateCardProps {
   bootMenuData: BoothMenuData | undefined;
@@ -25,8 +25,8 @@ const MenuCreateCard = ({ bootMenuData, onSuccess }: MenuCreateCardProps) => {
     <>
       <MenuCreateCardWrapper onClick={handleCreateClick}>
         <MenuCreateContents>
-          <img src={IMAGE_CONSTANTS.MENUPLUS} alt="메뉴 생성 버튼" />
-          <BtnText>메뉴 등록하기</BtnText>
+          <img src={IMAGE_CONSTANTS.MENUPLUS} alt='메뉴 생성 버튼' />
+          <BtnText>{`메뉴\n등록하기`}</BtnText>
         </MenuCreateContents>
       </MenuCreateCardWrapper>
 
@@ -73,10 +73,12 @@ const MenuCreateContents = styled.div`
 `;
 
 const BtnText = styled.div`
-  font-size: 14px;
-  font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  ${({ theme }) => theme.fonts.Bold14}
   color: ${({ theme }) => theme.colors.Focused};
-  ${({ theme }) => theme.fonts.Bold14};
+  white-space: pre-wrap;
 `;
 
 const ModalWrapper = styled.div`

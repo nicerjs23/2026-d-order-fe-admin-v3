@@ -1,15 +1,15 @@
-import * as S from "./CouponDetail.styled";
-import { Dispatch, SetStateAction } from "react";
-import { useState } from "react";
-import { isAxiosError } from "axios";
-import { DetailData } from "./DetailData";
-import { CouponItem } from "./CouponItem";
-import Qr from "@assets/icons/qr.svg";
-import { DeleteModal } from "@components/DeleteModal/DeleteModal";
-import { useCouponDetail } from "@pages/coupon/hooks/useCouponDetail";
-import { CouponService } from "@services/CouponService";
-import { IMAGE_CONSTANTS } from "@constants/imageConstants";
-import Toast from "@components/ToastMessage/Toast";
+import * as S from './CouponDetail.styled';
+import { Dispatch, SetStateAction } from 'react';
+import { useState } from 'react';
+import { isAxiosError } from 'axios';
+import { DetailData } from './DetailData';
+import { CouponItem } from './CouponItem';
+import Qr from '@assets/icons/qr.svg';
+import { DeleteModal } from '@components/DeleteModal/DeleteModal';
+import { useCouponDetail } from '@pages/coupon/hooks/useCouponDetail';
+import { CouponService } from '@services/CouponService';
+import { IMAGE_CONSTANTS } from '@constants/imageConstants';
+import Toast from '@components/ToastMessage/Toast';
 
 interface Props {
   couponId: number;
@@ -17,7 +17,7 @@ interface Props {
 }
 export const CouponDetail = ({ couponId, setSelectedCouponId }: Props) => {
   const [showDelete, setShowDelete] = useState(false);
-  const [toastMsg, setToastMsg] = useState("");
+  const [toastMsg, setToastMsg] = useState('');
   const { detail: detailData, codes } = useCouponDetail(couponId);
   const handleCancel = () => {
     setShowDelete(false);
@@ -26,7 +26,7 @@ export const CouponDetail = ({ couponId, setSelectedCouponId }: Props) => {
     try {
       await CouponService.getDownCouponExcel(couponId);
     } catch (err) {
-      console.error("쿠폰 엑셀 다운 실패:", err);
+      console.error('쿠폰 엑셀 다운 실패:', err);
     }
   };
   const handleDelete = async () => {
@@ -37,9 +37,9 @@ export const CouponDetail = ({ couponId, setSelectedCouponId }: Props) => {
     } catch (err) {
       setShowDelete(false);
       if (isAxiosError(err) && err.response?.status === 409) {
-        setToastMsg("이미 사용된 쿠폰은 삭제가 불가능합니다.");
+        setToastMsg('이미 사용된 쿠폰은 삭제가 불가능합니다.');
       } else {
-        console.error("쿠폰 삭제 실패:", err);
+        console.error('쿠폰 삭제 실패:', err);
       }
     }
   };
@@ -56,26 +56,27 @@ export const CouponDetail = ({ couponId, setSelectedCouponId }: Props) => {
           </S.TitleWrapper>
           <div>
             <S.DataContainer>
+              <DetailData DataTitle='쿠폰명' DataContent={detailData?.name} />
               <DetailData
-                DataTitle="쿠폰명"
-                DataContent={detailData?.name}
-              />
-              <DetailData
-                DataTitle="쿠폰 상세"
+                DataTitle='쿠폰 상세'
                 DataContent={detailData?.description ?? undefined}
               />
               <DetailData
-                DataTitle="할인 유형"
+                DataTitle='할인 유형'
                 DataContent={
-                  detailData?.discount_type === "AMOUNT" ? "가격" : "할인율(%)"
+                  detailData?.discount_type === 'AMOUNT' ? '가격' : '할인율(%)'
                 }
               />
               <DetailData
-                DataTitle="할인율"
-                DataContent={detailData?.discount_value}
+                DataTitle='할인율'
+                DataContent={
+                  detailData?.discount_type === 'RATE'
+                    ? `${detailData?.display_discount_value}%`
+                    : `${detailData?.display_discount_value}원`
+                }
               />
               <DetailData
-                DataTitle="수량"
+                DataTitle='수량'
                 DataContent={`${detailData?.unused_count}/${detailData?.quantity}`}
               />
             </S.DataContainer>
@@ -93,25 +94,31 @@ export const CouponDetail = ({ couponId, setSelectedCouponId }: Props) => {
       </S.DetailContainer>
       <S.CouponList>
         {codes.map((c) => {
-          return <CouponItem key={c.coupon_code_id} code={c.code} isUsed={c.is_used} />;
+          return (
+            <CouponItem
+              key={c.coupon_code_id}
+              code={c.code}
+              isUsed={c.is_used}
+            />
+          );
         })}
       </S.CouponList>
       {showDelete && (
         <DeleteModal
           onCancel={handleCancel}
           onDelete={handleDelete}
-          Title="정말 할인 쿠폰을 삭제하시겠어요?"
-          SubText1="할인 쿠폰을 삭제하면,"
-          SubText2="사용되지 않은 쿠폰은 사라져요!"
-          BtnName="쿠폰 삭제"
+          Title='정말 할인 쿠폰을 삭제하시겠어요?'
+          SubText1='할인 쿠폰을 삭제하면,'
+          SubText2='사용되지 않은 쿠폰은 사라져요!'
+          BtnName='쿠폰 삭제'
         />
       )}
       <Toast
         message={toastMsg}
         isVisible={!!toastMsg}
-        onClose={() => setToastMsg("")}
+        onClose={() => setToastMsg('')}
         icon={IMAGE_CONSTANTS.TOAST_ERROR}
-        variant="error"
+        variant='error'
       />
     </S.DetailBox>
   );

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const MenuCardWrapper = styled.div`
   display: flex;
@@ -74,7 +74,7 @@ export const DefaultCardImg = styled.div`
   background-color: ${({ theme }) => theme.colors.Bg};
 
   & img {
-    width: 140px;
+    width: 100px;
     height: auto;
   }
 `;

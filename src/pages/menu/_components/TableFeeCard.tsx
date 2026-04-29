@@ -1,31 +1,31 @@
-import styled from "styled-components";
-import { IMAGE_CONSTANTS } from "@constants/imageConstants";
-import { TableInfo } from "../Type/Menu_type";
+import styled from 'styled-components';
+import { IMAGE_CONSTANTS } from '@constants/imageConstants';
+import { TableInfo } from '../Type/Menu_type';
 type TableFeeCardProps = { table: TableInfo };
 
 const TableFeeCard = ({ table }: TableFeeCardProps) => {
   console.log(table);
   return (
     <TableFeeCardWrapper>
-      {table.seat_type === "테이블 이용료 없음" && (
+      {table.seat_type === '테이블 이용료 없음' && (
         <SoldOutOverlay>
           <SoldOutText>SOLD OUT</SoldOutText>
         </SoldOutOverlay>
       )}
       <CardContents>
         <CardImg>
-          <img src={IMAGE_CONSTANTS.CHARACTER} alt="테이블 이용료" />
+          <img src={IMAGE_CONSTANTS.NOMALCHARACTER} alt='테이블 이용료' />
         </CardImg>
         <CardInfo>
           <CardTextInner>
-            <CardText className="bold">테이블 이용료</CardText>
-            {table.seat_type === "테이블 이용료 없음" ? (
+            <CardText className='bold'>테이블 이용료</CardText>
+            {table.seat_type === '테이블 이용료 없음' ? (
               <CardText>0원</CardText>
             ) : (
               <>
                 {/* <CardText>{table.seat_tax_person.toLocaleString()}원</CardText> */}
                 <CardText>
-                  {table.seat_type === "person"
+                  {table.seat_type === 'person'
                     ? table.seat_tax_person.toLocaleString()
                     : table.seat_tax_table.toLocaleString()}
                   원
@@ -36,11 +36,11 @@ const TableFeeCard = ({ table }: TableFeeCardProps) => {
           <CardTextInner>
             <CardText>기준</CardText>
             <CardText>
-              {table.seat_type === "person"
-                ? "인원수"
-                : table.seat_type === "table"
-                ? "테이블"
-                : "기준없음"}
+              {table.seat_type === 'person'
+                ? '인원수'
+                : table.seat_type === 'table'
+                  ? '테이블'
+                  : '기준없음'}
             </CardText>
           </CardTextInner>
         </CardInfo>
@@ -114,7 +114,7 @@ const CardImg = styled.div`
   background-color: ${({ theme }) => theme.colors.Bg};
 
   & img {
-    width: 140px;
+    width: 100px;
     height: auto;
   }
 `;
