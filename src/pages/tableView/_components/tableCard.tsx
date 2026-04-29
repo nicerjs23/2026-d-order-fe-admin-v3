@@ -1,7 +1,7 @@
 // tableView/_components/tableCard.tsx
 import * as S from './tableComponents.styled';
 import { TABLEPAGE_CONSTANTS } from '../_constants/tableConstants';
-import ACCO from "@assets/images/character.svg";
+import { IMAGE_CONSTANTS } from '@constants/imageConstants';
 import { useState, useEffect, useCallback } from 'react';
 import { useTableSelection } from '../../../context/TableSelectionContext';
 
@@ -145,7 +145,7 @@ const TableCard: React.FC<Props> = ({ data, limitHours, isHighlighted, onGoToRep
       <S.MenuContainer>
         <S.MenuList>
           {data.orders.length === 0 && (
-            <S.EmptyImage src={ACCO} alt="빈 테이블" />
+            <S.EmptyImage src={IMAGE_CONSTANTS.SIDECHARACTER} alt="빈 테이블" />
           )}
 
           {data.orders.slice(0, 3).map((order, idx) => (
