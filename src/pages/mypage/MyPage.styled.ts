@@ -228,5 +228,5 @@ export const Divider = styled.div`
     display: flex;
     width: 100%;
     height: 1px;
-    background-color: rgba(192, 192, 192, 0.5);
+    border-bottom: 1px solid rgba(192, 192, 192, 0.5);
 `;
