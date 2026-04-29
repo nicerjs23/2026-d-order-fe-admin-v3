@@ -20,6 +20,7 @@ declare module 'styled-components' {
       Highlight: string;
       Gray01: string;
       Gray02: string;
+      Gray03: string;
 
       // 텍스트 색상
       Black01: string;
