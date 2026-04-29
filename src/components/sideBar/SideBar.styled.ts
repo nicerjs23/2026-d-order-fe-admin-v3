@@ -56,8 +56,13 @@ export const ActionContainer = styled.div`
   left: 0;
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+
   gap: 1.5rem;
   width: 92px;
+  height: calc(80px * 2 + 1.5rem);
+
   z-index: 10;
 `;
 
