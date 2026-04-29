@@ -369,7 +369,9 @@ const MenuModal = ({ handleCloseModal, boothMenuData }: MenuModalProps) => {
                   </button>
                 </S.ImgContainer>
               ) : (
-                <img src={preUploadImg} alt="기본 이미지" />
+                <S.UploadImgBox>
+                  <img src={preUploadImg} alt="기본 이미지" />
+                </S.UploadImgBox>
               )}
             </label>
           </S.ele>

@@ -98,9 +98,14 @@ export const setComposition = styled.div`
 
 export const inputText = styled.input`
   border-radius: 20px;
-  border: 1px solid ${({ theme }) => theme.colors.Black02};
+  border: 1px solid ${({ theme }) => theme.colors.Gray02};
   padding: 1rem;
   ${({ theme }) => theme.fonts.SemiBold16}
+  outline: none;
+
+  &:focus {
+    border: 1px solid ${({ theme }) => theme.colors.Black02};
+  }
 
   &::placeholder {
     color: ${({ theme }) => theme.colors.Focused};
@@ -113,6 +118,30 @@ export const inputText = styled.input`
 
 export const inputImg = styled.input`
   display: none;
+`;
+
+export const UploadImgBox = styled.div`
+  display: inline-block;
+  border: 1px solid ${({ theme }) => theme.colors.Orange01};
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+`;
+
+export const DefaultImgBox = styled.div`
+  width: 170px;
+  height: 170px;
+  background-color: white;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  img {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+  }
 `;
 export const ImgContainer = styled.div`
   position: relative;
@@ -143,11 +172,13 @@ export const FormContentWrapper = styled.div`
 `;
 
 export const SubTitle = styled.p`
-  color: #8a8a8a;
+  color: ${({ theme }) => theme.colors.Black02};
   span {
     color: ${({ theme }) => theme.colors.Orange01};
     ${({ theme }) => theme.fonts.SemiBold16}
-    margin-bottom: 10px;
+    vertical-align: super;
+    font-size: 0.7em;
+    margin-left: 2px;
   }
 `;
 
