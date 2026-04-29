@@ -9,6 +9,10 @@ export const Wrapper = styled.section`
   margin-left: 3.0625rem;
   background-color: ${({ theme }) => theme.colors.Bg};
 `;
+export const TitleContainer = styled.div`
+    ${({ theme }) => theme.fonts.Bold14};
+
+`;
 
 export const Title = styled.div`
     ${({ theme }) => theme.fonts.ExtraBold20};
