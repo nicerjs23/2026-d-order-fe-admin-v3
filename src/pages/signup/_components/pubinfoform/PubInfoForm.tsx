@@ -21,11 +21,12 @@ type Props = {
 
 const isValidPubName = (name: string) => {
   const trimmed = name.trim();
-  return /^[가-힣a-zA-Z0-9 ]{1,20}$/.test(trimmed);
+  // 완성형 한글 + 호환 자모(초성·중성·종성 단독 입력) + 영숫자·공백
+  return /^[가-힣\u3131-\u318Ea-zA-Z0-9 ]{1,20}$/.test(trimmed);
 };
 const isValidTableCount = (value: string) => {
   const number = Number(value);
-  return Number.isInteger(number) && number >= 1 && number <= 100;
+  return Number.isInteger(number) && number >= 1 && number <= 200;
 };
 const isValidTableFee = (value: string) => {
   const number = Number(value);
@@ -52,7 +53,7 @@ const PubInfoForm = ({
   const [pubNameSuccess, setPubNameSuccess] = useState<string | null>(null);
   const [tableCountError, setTableCountError] = useState<string | null>(null);
   const [tableCountSuccess, setTableCountSuccess] = useState<string | null>(
-    null
+    null,
   );
   const [tableFeeError, setTableFeeError] = useState<string | null>(null);
   const [tableFeeSuccess, setTableFeeSuccess] = useState<string | null>(null);
@@ -60,21 +61,21 @@ const PubInfoForm = ({
   // ---- 유효성(Boolean) 계산 ----
   const isPubNameValid = useMemo(
     () => !!pubName && isValidPubName(pubName),
-    [pubName]
+    [pubName],
   );
   const isTableCountValid = useMemo(
     () => !!tableCount && isValidTableCount(tableCount),
-    [tableCount]
+    [tableCount],
   );
 
   // 정책이 NO면 이용료는 비검증/비필수
   const isTableFeeRequired = useMemo(
     () => pubStage >= 2 && tableFeePolicy !== 'NO',
-    [pubStage, tableFeePolicy]
+    [pubStage, tableFeePolicy],
   );
   const isTableFeeValid = useMemo(
     () => !isTableFeeRequired || (!!tableFee && isValidTableFee(tableFee)),
-    [isTableFeeRequired, tableFee]
+    [isTableFeeRequired, tableFee],
   );
 
   const isFirstValid = isPubNameValid && isTableCountValid;
@@ -102,7 +103,7 @@ const PubInfoForm = ({
                 setPubNameSuccess('사용 가능한 주점명이에요!');
               } else {
                 setPubNameError(
-                  '1~20자 이내의 한글, 영문, 숫자를 입력해 주세요.'
+                  '1~20자 이내의 한글, 영문, 숫자를 입력해 주세요.',
                 );
                 setPubNameSuccess(null);
               }
@@ -133,13 +134,13 @@ const PubInfoForm = ({
                 setTableCountError(null);
                 setTableCountSuccess('사용 가능한 테이블 개수에요!');
               } else {
-                setTableCountError('1~100 사이의 숫자를 입력해 주세요.');
+                setTableCountError('1~200 사이의 숫자를 입력해 주세요.');
                 setTableCountSuccess(null);
               }
             }}
             error={tableCountError ?? undefined}
             success={tableCountSuccess ?? undefined}
-            helperText="1~100 사이의 숫자만 입력할 수 있어요."
+            helperText="1~200 사이의 숫자만 입력할 수 있어요."
             onClear={() => {
               onChange('tableCount', '');
               setTableCountError(null);
@@ -181,9 +182,11 @@ const PubInfoForm = ({
                 setTableFeeSuccess(null);
               }
             }}
-            error={isTableFeeRequired ? tableFeeError ?? undefined : undefined}
+            error={
+              isTableFeeRequired ? (tableFeeError ?? undefined) : undefined
+            }
             success={
-              isTableFeeRequired ? tableFeeSuccess ?? undefined : undefined
+              isTableFeeRequired ? (tableFeeSuccess ?? undefined) : undefined
             }
             helperText={
               isTableFeeRequired
