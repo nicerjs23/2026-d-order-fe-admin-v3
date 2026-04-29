@@ -187,3 +187,29 @@ export const CancleButton = styled.button`
     }
 `;
 
+
+
+export const OrderGroup = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+`;
+
+export const OrderGroupHeader = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.25rem 0;
+
+    .orderTitle {
+        ${({ theme }) => css(theme.fonts.ExtraBold20)};
+        color: ${({theme}) => theme.colors.Black01};
+    }
+
+    .orderTime {
+        ${({ theme }) => css(theme.fonts.Medium14)};
+        color: ${({theme}) => theme.colors.Gray02};
+    }
+`;

@@ -1,4 +1,3 @@
-// tableView/_ws/types.ts
 export type TableWSEventType =
     | "connection_established"
     | "merge_table"
@@ -14,10 +13,12 @@ export interface BaseWSPayload<TType extends TableWSEventType, TData> {
     data: TData;
 }
 
-export type WsConnectionEstablished = BaseWSPayload<
+export type ConnectionEstablishedEvent = BaseWSPayload<
     "connection_established",
     {
-        booth_id: number;
+        booth_id?: number;
+        table_num?: number;
+        [key: string]: unknown;
     }
 >;
 
@@ -46,21 +47,29 @@ export type WsEnterTable = BaseWSPayload<
     }
 >;
 
-// 백엔드 상세 스펙 확정 전까지 unknown으로 안전하게 유지
-export type WsOrderUpdate = BaseWSPayload<"order_update", unknown>;
+export type OrderUpdateEvent = BaseWSPayload<"order_update", unknown>;
 
-export type WsError = BaseWSPayload<
+export type WsErrorEvent = BaseWSPayload<
     "ERROR",
     {
-        code: string;
+        code: "AUTH_ERROR" | "PERMISSION_DENIED" | "INVALID_MESSAGE" | "SERVER_ERROR" | string;
         message: string;
     }
 >;
 
+export type TableDetailWSPayload =
+    | ConnectionEstablishedEvent
+    | OrderUpdateEvent
+    | WsErrorEvent;
+
 export type TableWSPayload =
-    | WsConnectionEstablished
+    | ConnectionEstablishedEvent
     | WsMergeTable
     | WsResetTable
     | WsEnterTable
-    | WsOrderUpdate
-    | WsError;
+    | OrderUpdateEvent
+    | WsErrorEvent;
+
+export type WsConnectionEstablished = ConnectionEstablishedEvent;
+export type WsOrderUpdate = OrderUpdateEvent;
+export type WsError = WsErrorEvent;

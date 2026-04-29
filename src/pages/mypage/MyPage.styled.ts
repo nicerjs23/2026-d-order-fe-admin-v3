@@ -2,12 +2,12 @@
 import styled from "styled-components";
 
 export const Wrapper = styled.section`
-  display: flex;
-  flex-direction: column;
-  width: 87%;
-  margin-top: 2.25rem;
-  margin-left: 3.0625rem;
-  background-color: ${({ theme }) => theme.colors.Bg};
+    display: flex;
+    flex-direction: column;
+    width: 87%;
+    margin-top: 2.25rem;
+    margin-left: 3.0625rem;
+    background-color: ${({ theme }) => theme.colors.Bg};
 `;
 export const TitleContainer = styled.div`
     ${({ theme }) => theme.fonts.Bold14};
