@@ -69,7 +69,7 @@ export const useSignupPage = (
           seat_type: seatType,
           seat_fee_person: seatType === 'PP' ? Number(formData.tableFee) : 0,
           seat_fee_table: seatType === 'PT' ? Number(formData.tableFee) : 0,
-          table_limit_hours: Number(formData.maxTime),
+          table_limit_hours: Number(formData.maxTime) / 60,
         },
       });
       // 회원가입 성공 시: 추가 호출(자동 로그인)이나 로컬 저장 없이 완료 모달만 노출
