@@ -22,6 +22,7 @@ export const useTableDetail = (tableNum: number) => {
       if (!res || !res.data) {
         throw new Error("테이블 상세 데이터가 비어 있습니다.");
       }
+      console.log("[TableDetail] fetched normalized data:", res.data);
       setDetail(res.data);
       setStatus("success");
     } catch (e: any) {

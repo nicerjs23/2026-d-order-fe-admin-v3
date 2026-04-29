@@ -189,13 +189,13 @@ const MyPage = () => {
 
   return (
     <S.Wrapper>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+      <S.TitleContainer style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <S.Title style={{ marginBottom: 0 }}>주점 정보</S.Title>
         <button onClick={handleQrClick} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', color: '#BDBDBD', cursor: 'pointer', fontSize: '14px' }}>
           <img src={QR_icon} alt="QR" style={{ width: '20px' }} />
           QR 코드 다운로드
         </button>
-      </div>
+      </S.TitleContainer>
       
       <S.Container>
         <S.Row>

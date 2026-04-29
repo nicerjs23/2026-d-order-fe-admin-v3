@@ -1,19 +1,39 @@
-// tableView/_apis/getTableDetail.ts
 import { instance } from "@services/instance";
 
-// ── 1. 서버 응답 원형 (새 API 명세 기준) ──
 export interface RawOrderItem {
-  id: number;
-  name: string;
-  quantity: number;
-  fixed_price: number;
-  created_at: string;
+  id?: number;
+  menu_id?: number;
+  name?: string;
+  image?: string | null;
+  quantity?: number;
+  fixed_price?: number;
+  item_total_price?: number;
+  from_set?: boolean;
+  status?: string;
+  created_at?: string;
+}
+
+export interface RawOrder {
+  order_id?: number;
+  order_number?: number;
+  order_status?: string;
+  created_at?: string;
+  has_coupon?: boolean;
+  coupon_name?: string | null;
+  table_coupon_id?: number | null;
+  order_discount_price?: number;
+  order_fixed_price?: number;
+  order_items?: RawOrderItem[];
 }
 
 export interface RawTableDetail {
-  table_number: string; // 새 명세에서는 문자열로 내려옴
-  table_total_price: number;
-  order_items: RawOrderItem[];
+  table_usage_id?: number | null;
+  table_number?: string | number;
+  table_total_price?: number;
+  total_original_price?: number;
+  total_discount_price?: number;
+  order_list?: RawOrder[];
+  order_items?: RawOrderItem[];
 }
 
 export interface RawResponse {
@@ -21,57 +41,106 @@ export interface RawResponse {
   data: RawTableDetail;
 }
 
-// ── 2. UI 친화 타입 (기존 컴포넌트 호환 유지) ──
-export type OrderDetail = {
+export interface TableDetailOrderItem {
   id: number;
+  menu_id: number | null;
   menu_name: string;
+  menu_image: string | null;
   quantity: number;
   price: number;
-  created_at: string;
-  menu_image?: string | null;
-};
+  item_total_price: number;
+  from_set?: boolean;
+  status?: string;
+  created_at?: string;
+  order_id?: number;
+  order_number?: number;
+  order_status?: string;
+  has_coupon?: boolean;
+  coupon_name?: string | null;
+  table_coupon_id?: number | null;
+  order_discount_price?: number;
+  order_fixed_price?: number;
+}
 
-export type TableDetailData = {
+export type OrderDetail = TableDetailOrderItem;
+
+export interface TableDetailData {
+  table_usage_id: number | null;
   table_num: number;
   table_amount: number;
-  table_status?: "IN_USE" | "AVAILABLE" | "unknown"; // 새 상세 API에는 없으므로 옵셔널 처리
-  created_at?: string | null;
-  orders: OrderDetail[];
-};
+  total_original_price: number;
+  total_discount_price: number;
+  orders: TableDetailOrderItem[];
+}
 
 export type TableDetailResponse = {
   message: string;
   data: TableDetailData;
 };
 
-// ── 3. 데이터 정규화 함수 ──
-const normalize = (raw: RawTableDetail): TableDetailData => {
-  const table_num = Number(raw.table_number) || 0;
-  const table_amount = raw.table_total_price ?? 0;
+const toNumber = (value: unknown, fallback = 0): number => {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+};
 
-  const orders: OrderDetail[] = Array.isArray(raw.order_items)
-    ? raw.order_items.map((o) => ({
-        id: o.id,
-        menu_name: o.name,
-        quantity: o.quantity,
-        price: o.fixed_price,
-        created_at: o.created_at,
-        menu_image: null, // 이미지 정보가 내려오지 않으므로 기본값
-      }))
-    : [];
+const mapItem = (
+  item: RawOrderItem,
+  parentOrder?: RawOrder,
+  fallbackIndex = 0
+): TableDetailOrderItem => {
+  const quantity = toNumber(item.quantity, 0);
+  const price = toNumber(item.fixed_price, 0);
 
   return {
-    table_num,
-    table_amount,
-    orders,
-    table_status: "IN_USE", // 상세를 본다는 건 보통 사용 중임을 의미
+    id: toNumber(item.id, fallbackIndex + 1),
+    menu_id: item.menu_id ?? null,
+    menu_name: item.name ?? "",
+    menu_image: item.image ?? null,
+    quantity,
+    price,
+    item_total_price: toNumber(item.item_total_price, price * quantity),
+    from_set: item.from_set,
+    status: item.status,
+    created_at: item.created_at ?? parentOrder?.created_at,
+    order_id: parentOrder?.order_id,
+    order_number: parentOrder?.order_number,
+    order_status: parentOrder?.order_status,
+    has_coupon: parentOrder?.has_coupon,
+    coupon_name: parentOrder?.coupon_name ?? null,
+    table_coupon_id: parentOrder?.table_coupon_id ?? null,
+    order_discount_price: parentOrder?.order_discount_price,
+    order_fixed_price: parentOrder?.order_fixed_price,
   };
 };
 
-// ── 4. API 호출 함수 ──
+const normalize = (raw: RawTableDetail): TableDetailData => {
+  const table_amount = toNumber(raw.table_total_price, 0);
+
+  const normalizedOrders: TableDetailOrderItem[] = Array.isArray(raw.order_list)
+    ? raw.order_list.flatMap((order) =>
+        Array.isArray(order.order_items)
+          ? order.order_items.map((item, idx) => mapItem(item, order, idx))
+          : []
+      )
+    : Array.isArray(raw.order_items)
+    ? raw.order_items.map((item, idx) => mapItem(item, undefined, idx))
+    : [];
+
+  return {
+    table_usage_id:
+      raw.table_usage_id === null || raw.table_usage_id === undefined
+        ? null
+        : toNumber(raw.table_usage_id, 0),
+    table_num: toNumber(raw.table_number, 0),
+    table_amount,
+    total_original_price: toNumber(raw.total_original_price, table_amount),
+    total_discount_price: toNumber(raw.total_discount_price, 0),
+    orders: normalizedOrders,
+  };
+};
+
 export const getTableDetail = async (tableNum: number): Promise<TableDetailResponse> => {
   try {
-    // URL v3로 변경 (경로 맨 뒤 슬래시 제거)
     const res = await instance.get<RawResponse>(`/api/v3/django/booth/tables/${tableNum}`);
     const body = res.data;
 

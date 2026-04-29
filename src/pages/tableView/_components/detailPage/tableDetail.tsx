@@ -47,6 +47,18 @@ const toImageUrl = (p?: string | null): string | null => {
   return `${API_ORIGIN}/${val}`;
 };
 
+
+
+const formatOrderTime = (createdAt?: string): string => {
+  if (!createdAt) return "";
+  const date = new Date(createdAt);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleTimeString("ko-KR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+};
 const TableDetail: React.FC<Props> = ({ data, onBack }) => {
   const navigate = useNavigate();
   const [toastMsg, setToastMsg] = useState<string>("");
@@ -97,6 +109,37 @@ const TableDetail: React.FC<Props> = ({ data, onBack }) => {
     }
   }, [tableDetailData.table_num]);
 
+  const groupedOrders = useMemo(() => {
+    const groups = new Map<string, { orderNumber?: number; createdAt?: string; items: typeof tableDetailData.orders }>();
+
+    tableDetailData.orders.forEach((order) => {
+      const hasOrderNumber = typeof order.order_number === "number";
+      const key = hasOrderNumber ? String(order.order_number) : "unknown";
+
+      const current = groups.get(key);
+      if (!current) {
+        groups.set(key, {
+          orderNumber: hasOrderNumber ? order.order_number : undefined,
+          createdAt: order.created_at,
+          items: [order],
+        });
+        return;
+      }
+
+      if (!current.createdAt && order.created_at) {
+        current.createdAt = order.created_at;
+      }
+      current.items.push(order);
+    });
+
+    return Array.from(groups.values()).sort((a, b) => {
+      if (a.orderNumber == null && b.orderNumber == null) return 0;
+      if (a.orderNumber == null) return 1;
+      if (b.orderNumber == null) return -1;
+      return a.orderNumber - b.orderNumber;
+    });
+  }, [tableDetailData.orders]);
+
   return (
     <>
       <S.DetailWrapper>
@@ -137,50 +180,58 @@ const TableDetail: React.FC<Props> = ({ data, onBack }) => {
           {tableDetailData.orders.length === 0 ? (
             <EmptyOrder />
           ) : (
-            tableDetailData.orders.map((order, idx) => (
-              <div key={order.id ?? `no-id-${idx}`}>
-                <S.ItemWrapper>
-                  <S.ContentContainer>
-                    <S.ImageWrapper>
-                      <img
-                        src={toImageUrl(order.menu_image) ?? ACCO}
-                        alt={order.menu_name}
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          e.currentTarget.src = ACCO;
-                        }}
-                      />
-                    </S.ImageWrapper>
-                    <S.TitleWrapper>
-                      <p className="menuName">{order.menu_name}</p>
-                      <S.GrayText>
-                        <p>수량 : {order.quantity}</p>
-                        <p>가격 : {order.price.toLocaleString()}원</p>
-                      </S.GrayText>
-                    </S.TitleWrapper>
-                  </S.ContentContainer>
-                  <S.ButtonWrapper>
-                    <S.CancleButton
-                      onClick={() => {
-                        // 🚨 백엔드에서 id를 안 내려줬을 때 방어 코드
-                        if (!order.id) {
-                          alert("주문 항목 ID가 없습니다. (백엔드 명세 확인 필요)");
-                          return;
-                        }
-                        setSelectedMenu({
-                          id: order.id,
-                          name: order.menu_name,
-                          quantity: order.quantity,
-                        });
-                      }}
-                    >
-                      <img src={IMAGE_CONSTANTS.Delete} alt="삭제" />
-                      주문 취소
-                    </S.CancleButton>
-                  </S.ButtonWrapper>
-                </S.ItemWrapper>
-                <S.DivideLine />
-              </div>
+            groupedOrders.map((group, groupIdx) => (
+              <S.OrderGroup key={`${group.orderNumber ?? "unknown"}-${groupIdx}`}>
+                <S.OrderGroupHeader>
+                  <p className="orderTitle">주문 {group.orderNumber ?? "-"}</p>
+                  <p className="orderTime">{formatOrderTime(group.createdAt)}</p>
+                </S.OrderGroupHeader>
+
+                {group.items.map((order, idx) => (
+                  <div key={order.id ?? `no-id-${idx}`}>
+                    <S.ItemWrapper>
+                      <S.ContentContainer>
+                        <S.ImageWrapper>
+                          <img
+                            src={toImageUrl(order.menu_image) ?? ACCO}
+                            alt={order.menu_name}
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = ACCO;
+                            }}
+                          />
+                        </S.ImageWrapper>
+                        <S.TitleWrapper>
+                          <p className="menuName">{order.menu_name}</p>
+                          <S.GrayText>
+                            <p>수량 : {order.quantity}</p>
+                            <p>가격 : {order.price.toLocaleString()}원</p>
+                          </S.GrayText>
+                        </S.TitleWrapper>
+                      </S.ContentContainer>
+                      <S.ButtonWrapper>
+                        <S.CancleButton
+                          onClick={() => {
+                            if (!order.id) {
+                              alert("주문 항목 ID가 없습니다. (백엔드 명세 확인 필요)");
+                              return;
+                            }
+                            setSelectedMenu({
+                              id: order.id,
+                              name: order.menu_name,
+                              quantity: order.quantity,
+                            });
+                          }}
+                        >
+                          <img src={IMAGE_CONSTANTS.Delete} alt="삭제" />
+                          주문 취소
+                        </S.CancleButton>
+                      </S.ButtonWrapper>
+                    </S.ItemWrapper>
+                    <S.DivideLine />
+                  </div>
+                ))}
+              </S.OrderGroup>
             ))
           )}
         </S.MenuList>
