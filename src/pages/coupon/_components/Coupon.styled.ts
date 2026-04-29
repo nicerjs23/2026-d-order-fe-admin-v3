@@ -105,11 +105,13 @@ export const FormContentWrapper = styled.div`
 `;
 
 export const SubTitle = styled.p`
-  color: #8a8a8a;
+  color: ${({ theme }) => theme.colors.Black02};
   span {
     color: ${({ theme }) => theme.colors.Orange01};
     ${({ theme }) => theme.fonts.SemiBold16}
-    margin-bottom: 10px;
+    vertical-align: super;
+    font-size: 0.7em;
+    margin-left: 2px;
   }
 `;
 
@@ -161,7 +163,7 @@ export const DividerLine = styled.div`
   display: flex;
   height: 1px;
   width: 100%;
-  background-color: ${({ theme }) => theme.colors.Black02};
+  background-color: rgba(192, 192, 192, 0.5);
   margin: 2rem 0 1rem 0;
 `;
 
@@ -175,21 +177,28 @@ export const RadioLabel = styled.label`
 export const BottomBtnContainer = styled.div`
   display: flex;
   flex-direction: row;
+  border-top: 1px solid ${({ theme }) => theme.colors.Black02};
+  border-radius: 0 0 10px 10px;
+  overflow: hidden;
 `;
 export const BottomBtn = styled.button`
   display: flex;
   width: 50%;
-  height: 50px;
-  border: 1px solid ${({ theme }) => theme.colors.Black02};
+  height: 60px;
+  border: none;
   justify-content: center;
   align-items: center;
   background-color: ${({ theme }) => theme.colors.Gray01};
 
-  ${({ theme }) => theme.fonts.SemiBold16}
+  ${({ theme }) => theme.fonts.Bold18}
   color: ${({ theme, disabled }) =>
-    disabled ? theme.colors.Black02 : theme.colors.Orange01};
+    disabled ? theme.colors.Gray02 : theme.colors.Orange01};
 
   cursor: pointer;
+
+  &:first-child {
+    border-right: 1px solid ${({ theme }) => theme.colors.Black02};
+  }
 `;
 
 //card
@@ -351,6 +360,6 @@ export const ModalWrapper = styled.div`
 
 export const WarningText = styled.div`
   display: flex;
-  ${({ theme }) => theme.fonts.SemiBold10};
+  ${({ theme }) => theme.fonts.Medium12};
   color: ${({ theme }) => theme.colors.Error};
 `;

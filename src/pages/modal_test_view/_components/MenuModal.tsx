@@ -36,6 +36,7 @@ type SetItem = {
 const MenuModal = ({ handleCloseModal, boothMenuData }: MenuModalProps) => {
   const [UploadImg, setUploadImg] = useState<string | null>(null);
   const [buttonDisable, setButtonDisable] = useState<boolean>(true);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const [category, setCategory] = useState<string>('메뉴');
   const [name, setName] = useState<string>('');
@@ -155,6 +156,8 @@ const MenuModal = ({ handleCloseModal, boothMenuData }: MenuModalProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (isSubmitting) return;
+
     if (
       !category ||
       !name ||
@@ -170,66 +173,49 @@ const MenuModal = ({ handleCloseModal, boothMenuData }: MenuModalProps) => {
       return;
     }
 
-    if (category === '세트') {
-      const menu_items = setItems
-        .filter((it) => it.menuId !== null)
-        .map((it) => ({ menu_id: it.menuId as number, quantity: it.amount }));
+    setIsSubmitting(true);
 
-      // V3 필드명: set_name→name, set_description→description, set_price→price, set_image→image
-      const formData = new FormData();
-      formData.append('name', name);
-      formData.append('description', desc || '');
-      formData.append('price', String(Number(price)));
-      formData.append('set_items', JSON.stringify(menu_items));
+    try {
+      if (category === '세트') {
+        const menu_items = setItems
+          .filter((it) => it.menuId !== null)
+          .map((it) => ({ menu_id: it.menuId as number, quantity: it.amount }));
 
-      if (image) {
-        const fileToUpload =
-          image.size <= MIN_FILE_SIZE ? image : await compressImage(image);
-        formData.append('image', fileToUpload);
-      }
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('description', desc || '');
+        formData.append('price', String(Number(price)));
+        formData.append('set_items', JSON.stringify(menu_items));
 
-      try {
+        if (image) {
+          const fileToUpload =
+            image.size <= MIN_FILE_SIZE ? image : await compressImage(image);
+          formData.append('image', fileToUpload);
+        }
+
         await MenuServiceWithImg.createSetMenu(formData);
-        handleCloseModal();
-      } catch (e) {
-        console.log(e);
-      }
-      return;
-    }
-
-    // 단일 메뉴 처리
-    const categoryMap: Record<string, string> = { '메뉴': 'MENU', '음료': 'DRINK' };
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('description', desc || '');
-    formData.append('category', categoryMap[category] ?? category);
-    formData.append('price', price);
-    formData.append('stock', stock);
-
-    if (image) {
-      if (image.size <= MIN_FILE_SIZE) {
-        formData.append('image', image);
       } else {
-        try {
-          const correctedFile = await compressImage(image);
-          formData.append('image', correctedFile);
-        } catch (e) {
-          console.log(e);
+        const categoryMap: Record<string, string> = { '메뉴': 'MENU', '음료': 'DRINK' };
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('description', desc || '');
+        formData.append('category', categoryMap[category] ?? category);
+        formData.append('price', price);
+        formData.append('stock', stock);
+
+        if (image) {
+          const fileToUpload =
+            image.size <= MIN_FILE_SIZE ? image : await compressImage(image);
+          formData.append('image', fileToUpload);
+          await MenuServiceWithImg.createMenu(formData);
+        } else {
+          await MenuService.createMenu(formData);
         }
       }
-      try {
-        await MenuServiceWithImg.createMenu(formData);
-        handleCloseModal();
-      } catch (e) {
-        console.log(e);
-      }
-    } else {
-      try {
-        await MenuService.createMenu(formData);
-        handleCloseModal();
-      } catch (e) {
-        console.log(e);
-      }
+      handleCloseModal();
+    } catch (e) {
+      console.log(e);
+      setIsSubmitting(false);
     }
   };
   return (
@@ -393,7 +379,7 @@ const MenuModal = ({ handleCloseModal, boothMenuData }: MenuModalProps) => {
         <button type="button" onClick={handleCloseModal}>
           취소
         </button>
-        <button type="submit" disabled={buttonDisable}>
+        <button type="submit" disabled={buttonDisable || isSubmitting}>
           메뉴 등록
         </button>
       </S.ModalConfirmContainer>
