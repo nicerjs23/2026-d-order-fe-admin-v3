@@ -142,7 +142,6 @@ const UserInfoForm = ({
           setConfirmPwSuccess(null);
         }}
         isVisible={userStage >= 3}
-        forceShowPasswordWhenSuccess
         disabled={userStage !== 3}
       />
 
