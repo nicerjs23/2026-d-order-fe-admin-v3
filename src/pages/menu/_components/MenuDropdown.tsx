@@ -1,6 +1,6 @@
-import * as S from "./MenuDropdown.styled";
-import { IMAGE_CONSTANTS } from "@constants/imageConstants";
-import { BoothMenuData } from "../Type/Menu_type";
+import * as S from './MenuDropdown.styled';
+import { IMAGE_CONSTANTS } from '@constants/imageConstants';
+import { BoothMenuData } from '../Type/Menu_type';
 
 interface MenuDropDownProps {
   isOpen: boolean;
@@ -28,10 +28,10 @@ const MenuDropdown = ({
   selectedMenuIds,
 }: MenuDropDownProps) => {
   const mainMenus =
-    boothMenuData?.menus.filter((menu) => menu.menu_category === "메뉴") ?? [];
+    boothMenuData?.menus.filter((menu) => menu.menu_category === '메뉴') ?? [];
 
   const drinksMenus =
-    boothMenuData?.menus.filter((menu) => menu.menu_category === "음료") ?? [];
+    boothMenuData?.menus.filter((menu) => menu.menu_category === '음료') ?? [];
 
   const handleToggle = () => {
     if (selectedId !== null) return;
@@ -51,24 +51,24 @@ const MenuDropdown = ({
     <S.Wrapper>
       {selectedId === null ? (
         <S.SelectBox onClick={handleToggle} $isOpen={isOpen}>
-          <span>{"메뉴 선택"}</span>
-          <S.ArrowIcon src={IMAGE_CONSTANTS.UP} $isOpen={isOpen} alt="arrow" />
+          <span>{'메뉴 선택'}</span>
+          <S.ArrowIcon src={IMAGE_CONSTANTS.UP} $isOpen={isOpen} alt='arrow' />
         </S.SelectBox>
       ) : (
         <S.SelectBox $isOpen={false} onClick={() => {}}>
           <span>{selectedName}</span>
-          <button type="button" onClick={onRemove}>
-            <img src={IMAGE_CONSTANTS.CLOSE} alt="remove" />
+          <button type='button' onClick={onRemove}>
+            <img src={IMAGE_CONSTANTS.CLOSE} alt='remove' />
           </button>
         </S.SelectBox>
       )}
       {isOpen && selectedId === null && (
         <S.OptionBox>
-          <S.Option className="disabled">메뉴</S.Option>
+          <S.Option className='disabled'>{`> 메뉴`}</S.Option>
           {mainMenus.map((menu) => (
             <S.Option
               key={menu.menu_id}
-              className={isMenuDisabled(menu.menu_id) ? "disabled" : ""}
+              className={isMenuDisabled(menu.menu_id) ? 'disabled' : ''}
               onClick={() => {
                 handleMenuSelect(menu.menu_id, menu.menu_name);
               }}
@@ -76,11 +76,11 @@ const MenuDropdown = ({
               {menu.menu_name}
             </S.Option>
           ))}
-          <S.Option className="disabled">음료</S.Option>
+          <S.Option className='disabled'>{`> 음료`}</S.Option>
           {drinksMenus.map((menu) => (
             <S.Option
               key={menu.menu_id}
-              className={isMenuDisabled(menu.menu_id) ? "disabled" : ""}
+              className={isMenuDisabled(menu.menu_id) ? 'disabled' : ''}
               onClick={() => {
                 handleMenuSelect(menu.menu_id, menu.menu_name);
               }}
@@ -94,7 +94,7 @@ const MenuDropdown = ({
         <S.AmountWrapper>
           수량
           <button
-            type="button"
+            type='button'
             onClick={() => onChangeAmount(Math.max(1, amount - 1))}
           >
             <img
@@ -103,12 +103,12 @@ const MenuDropdown = ({
                   ? IMAGE_CONSTANTS.minusActive
                   : IMAGE_CONSTANTS.Minus
               }
-              alt="minus"
+              alt='minus'
             />
           </button>
           {amount}
-          <button type="button" onClick={() => onChangeAmount(amount + 1)}>
-            <img src={IMAGE_CONSTANTS.Add} alt="add" />
+          <button type='button' onClick={() => onChangeAmount(amount + 1)}>
+            <img src={IMAGE_CONSTANTS.Add} alt='add' />
           </button>
         </S.AmountWrapper>
       )}

@@ -1,10 +1,10 @@
-import { IMAGE_CONSTANTS } from "@constants/imageConstants";
-import { useEffect, useState } from "react";
-import styled from "styled-components";
-import { CouponRegisterModal } from "./CouponRegisterModal";
-import { CouponCard } from "./CouponCard";
-import { CouponDetail } from "./CouponDetail/CouponDetail";
-import { useCouponList } from "../hooks/useCouponList";
+import { IMAGE_CONSTANTS } from '@constants/imageConstants';
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { CouponRegisterModal } from './CouponRegisterModal';
+import { CouponCard } from './CouponCard';
+import { CouponDetail } from './CouponDetail/CouponDetail';
+import { useCouponList } from '../hooks/useCouponList';
 const CouponCreateCard = () => {
   const [registerModal, setRegisterModal] = useState(false);
   const [selectedCouponId, setSelectedCouponId] = useState<number | null>(null);
@@ -36,8 +36,8 @@ const CouponCreateCard = () => {
         <>
           <CouponCreateCardWrapper onClick={handleCreateClick}>
             <CouponCreateContents>
-              <img src={IMAGE_CONSTANTS.MENUPLUS} alt="쿠폰 생성 아이콘" />
-              <span>쿠폰 등록하기</span>
+              <img src={IMAGE_CONSTANTS.MENUPLUS} alt='쿠폰 생성 아이콘' />
+              <CouponCreateText>{`쿠폰 \n등록하기`}</CouponCreateText>
             </CouponCreateContents>
           </CouponCreateCardWrapper>
 
@@ -101,4 +101,13 @@ const ModalWrapper = styled.div`
   align-items: center;
   background-color: rgba(0, 0, 0, 0.4);
   z-index: 999;
+`;
+
+const CouponCreateText = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  ${({ theme }) => theme.fonts.Bold14}
+  color: ${({ theme }) => theme.colors.Focused};
+  white-space: pre-wrap;
 `;
