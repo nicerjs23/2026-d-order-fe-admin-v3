@@ -32,6 +32,7 @@ const colors = {
   Highlight: '#BE5D3A',
   Gray01: '#F2F2F2',
   Gray02: '#AFAFAF',
+  Gray03: '#888888',
 
   // 텍스트 색상
   Black01: '#2A2A2A',

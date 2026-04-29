@@ -20,12 +20,12 @@ export const SectionTitle = styled.h2`
   gap: 0.5rem;
   margin: 0;
   ${({ theme }) => theme.fonts.Medium16};
-  color: '#888888';
+  color: ${({ theme }) => theme.colors.Gray03};
 `;
 
 export const SectionTitleIcon = styled.span`
   display: flex;
-  color: ${({ theme }) => theme.colors.Gray02};
+  color: ${({ theme }) => theme.colors.Gray03};
 `;
 
 export const SectionList = styled.ul`
