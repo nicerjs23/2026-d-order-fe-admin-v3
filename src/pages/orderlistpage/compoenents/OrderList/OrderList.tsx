@@ -3,7 +3,7 @@ import * as S from './OrderList.styled';
 
 import OrderBox, { type OrderBoxData } from '../orderbox/OrderBox';
 
-import SadAcoImage from '@assets/icons/SadAcoco.png';
+import { IMAGE_CONSTANTS } from '@constants/imageConstants';
 
 export type OpenTarget = { tableIndex: number; itemIndex: number } | null;
 
@@ -32,7 +32,7 @@ export default function OrderList({
     <S.OrderListWrapper>
       {isEmpty ? (
         <S.EmptyStateWrapper>
-          <S.EmptyStateImage src={SadAcoImage} alt='' />
+          <S.EmptyStateImage src={IMAGE_CONSTANTS.NOMALCHARACTER} alt="" />
           <S.EmptyStateText>{`요청이 없어요..\n이참에 쉬어볼까요?`}</S.EmptyStateText>
         </S.EmptyStateWrapper>
       ) : (
