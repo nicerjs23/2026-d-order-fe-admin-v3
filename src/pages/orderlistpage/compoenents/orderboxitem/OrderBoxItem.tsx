@@ -112,7 +112,7 @@ export default function OrderBoxItem({
             )}
           </S.ItemImage>
           <S.ItemInfoName>
-            {set_menu && <S.SetPill>세트</S.SetPill>}
+            {set_menu && <S.SetPill $status={status}>세트</S.SetPill>}
             <S.MenuName $status={status}>{menuName}</S.MenuName>
           </S.ItemInfoName>
         </S.ItemInfo>

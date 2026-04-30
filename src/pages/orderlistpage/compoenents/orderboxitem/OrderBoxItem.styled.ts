@@ -114,10 +114,11 @@ export const ItemInfoName = styled.div`
   flex: 1;
 `;
 
-export const SetPill = styled.span`
+export const SetPill = styled.span<{ $status: OrderStatus }>`
   padding: 0.125rem 0.25rem;
   border-radius: 0.25rem;
-  background-color: ${({ theme }) => theme.colors.Orange01};
+  background-color: ${({ theme, $status }) =>
+    $status === '조리중' ? theme.colors.Orange01 : theme.colors.Focused};
   color: ${({ theme }) => theme.colors.White};
   ${({ theme }) => theme.fonts.SemiBold10};
 `;
