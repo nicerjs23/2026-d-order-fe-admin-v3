@@ -57,6 +57,10 @@ import ToastError from '@assets/icons/toastError.svg';
 
 import LOGOIMAGE from '@assets/images/CharacterV3.png';
 
+import MypageLogout from '@assets/icons/mypage_logout.svg';
+import DetailPageBackword from '@assets/icons/DetailPageBackword.svg';
+import DetailPageIcon from '@assets/icons/DetailPageLogo.png';
+
 export const IMAGE_CONSTANTS = {
   LOGO: '/images/LogoV3.png',
   LOGO2: '/images/Logo2V3.png',
@@ -130,4 +134,8 @@ export const IMAGE_CONSTANTS = {
   TOAST_ERROR: ToastError,
 
   LOGOIMAGE: LOGOIMAGE,
+
+  MypageLogout: MypageLogout,
+  DetailPageBackword: DetailPageBackword,
+  DetailPageIcon: DetailPageIcon,
 };

@@ -148,7 +148,7 @@ const TableDetail: React.FC<Props> = ({ data, onBack }) => {
             <S.BackButton
               onClick={() => (onBack ? onBack() : navigate("/table-view"))}
             >
-              <img src={IMAGE_CONSTANTS.BACKWARD_BLACK} alt="뒤로가기버튼" />
+              <img src={IMAGE_CONSTANTS.DetailPageBackword} alt="뒤로가기버튼" />
             </S.BackButton>
             <p className="tableNumber">테이블 {tableDetailData.table_num} |</p>
             <p>상세 주문 내역</p>

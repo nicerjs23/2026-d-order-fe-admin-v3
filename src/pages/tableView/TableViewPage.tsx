@@ -1,5 +1,5 @@
 // tableView/TableViewPage.tsx
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import TableViewGrid from "./_components/tableGrid";
 import * as S from "./TableViewPage.styled";
@@ -21,10 +21,20 @@ const TableViewPage = () => {
     
     // 통합 토스트 메시지 상태
     const [toastMsg, setToastMsg] = useState<string>("");
+    const [toastVariant, setToastVariant] = useState<'default' | 'error'>('default');
 
     const handleSelectTable = (table: TableItem) => {
         navigate(buildTableDetailPath(table.tableNum));
     };
+
+    const handleShowToast = useCallback((message: string, variant: 'default' | 'error' = 'default') => {
+        setToastMsg(message);
+        setToastVariant(variant);
+    }, []);
+
+    const handleCloseToast = useCallback(() => {
+        setToastMsg("");
+    }, []);
 
     // 🌟 대시보드 웹소켓 연결 및 이벤트 매핑
     useTablesWS({
@@ -35,7 +45,7 @@ const TableViewPage = () => {
         onEnterTable: (data) => {
             refetch(); // 화면 갱신
             if (data?.table_num) {
-                setToastMsg(`🔔 ${data.table_num}번 테이블에 손님이 입장했습니다!`);
+                handleShowToast(`🔔 ${data.table_num}번 테이블에 손님이 입장했습니다!`);
             }
         },
         onError: (err) => console.error("[WS 대시보드] 에러:", err),
@@ -44,10 +54,10 @@ const TableViewPage = () => {
     useEffect(() => {
         // 상세 페이지에서 넘어온 초기화/병합 등 라우팅 토스트 처리
         if (location.state?.resetToastMessage) {
-            setToastMsg(location.state.resetToastMessage);
+            handleShowToast(location.state.resetToastMessage);
             navigate(location.pathname, { replace: true, state: {} });
         }
-    }, [location, navigate]);
+    }, [location, navigate, handleShowToast]);
 
     if (loading && tableList.length === 0) { // 최초 로딩 시에만 스피너
         return (
@@ -67,11 +77,16 @@ const TableViewPage = () => {
 
     return (
         <S.PageWrapper>
-            <TableViewGrid tableList={tableList} onSelectTable={handleSelectTable} />
+            <TableViewGrid
+                tableList={tableList}
+                onSelectTable={handleSelectTable}
+                onShowToast={handleShowToast}
+            />
             <Toast 
                 message={toastMsg} 
                 isVisible={!!toastMsg} 
-                onClose={() => setToastMsg("")} 
+                onClose={handleCloseToast}
+                variant={toastVariant}
             />
         </S.PageWrapper>
     );

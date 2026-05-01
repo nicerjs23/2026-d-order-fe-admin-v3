@@ -9,6 +9,7 @@ import { getBoothMyPage } from "../_apis/getBoothMyPage"; // 🌟 새 API 임포
 interface Props {
   tableList: TableItem[];
   onSelectTable: (table: TableItem) => void;
+  onShowToast?: (message: string, variant?: 'default' | 'error') => void;
 }
 
 // 🌟 CardData에서 isOverdue를 제거하고 startedAt을 추가 (오버듀 계산은 Card 내부에서 실시간으로 처리)
@@ -27,7 +28,7 @@ const chunk = <T,>(arr: T[], size: number) =>
 
 const ITEMS_PER_PAGE = 15;
 
-const TableViewGrid: React.FC<Props> = ({ tableList, onSelectTable }) => {
+const TableViewGrid: React.FC<Props> = ({ tableList, onSelectTable, onShowToast }) => {
   // 부스의 이용 시간 제한 (시간 단위, ex: 2.00 -> 2)
   const [limitHours, setLimitHours] = useState<number | null>(null);
   // 하이라이트 효과를 줄 대표 테이블 번호 상태
@@ -127,6 +128,7 @@ const TableViewGrid: React.FC<Props> = ({ tableList, onSelectTable }) => {
                     isHighlighted={highlightedTable === original.tableNum} 
                     onGoToRepresentative={handleGoToRepresentative}
                     onSelect={() => onSelectTable(original)} 
+                    onShowToast={onShowToast}
                   />
                 </div>
               ))}

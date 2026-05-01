@@ -20,9 +20,17 @@ interface Props {
   isHighlighted?: boolean;
   onGoToRepresentative?: (repNum: number) => void;
   onSelect?: () => void;
+  onShowToast?: (message: string, variant?: 'default' | 'error') => void;
 }
 
-const TableCard: React.FC<Props> = ({ data, limitHours, isHighlighted, onGoToRepresentative, onSelect }) => {
+const TableCard: React.FC<Props> = ({
+  data,
+  limitHours,
+  isHighlighted,
+  onGoToRepresentative,
+  onSelect,
+  onShowToast,
+}) => {
   const { selectedTables, toggleTableSelection } = useTableSelection();
   const isSelected = selectedTables.includes(data.tableNumber); 
   
@@ -40,10 +48,18 @@ const TableCard: React.FC<Props> = ({ data, limitHours, isHighlighted, onGoToRep
   const [elapsedTime, setElapsedTime] = useState<string>("00:00");
   const [isOverdue, setIsOverdue] = useState<boolean>(false);
   
-  // 입장 시간 기반으로 경과 시간 및 초과 여부 계산 로직
+  // 첫 주문 시간 기반으로 경과 시간 및 초과 여부 계산 로직
   const checkTimeAndStatus = useCallback(() => {
+    const hasOrders = data.orders.length > 0;
+
     // 자식 테이블은 시간을 계산하지 않음 (대표 테이블만 보여주면 됨)
-    if (isChild || !data.startedAt) {
+    if (isChild || !hasOrders) {
+      setElapsedTime("00:00");
+      setIsOverdue(false);
+      return;
+    }
+
+    if (!data.startedAt) {
       setElapsedTime("00:00");
       setIsOverdue(false);
       return;
@@ -52,7 +68,11 @@ const TableCard: React.FC<Props> = ({ data, limitHours, isHighlighted, onGoToRep
     const orderDate = new Date(data.startedAt);
     const currentDate = new Date();
 
-    if (isNaN(orderDate.getTime())) return;
+    if (isNaN(orderDate.getTime())) {
+      setElapsedTime("00:00");
+      setIsOverdue(false);
+      return;
+    }
 
     const diffInMs = currentDate.getTime() - orderDate.getTime();
     if (diffInMs <= 0) {
@@ -75,7 +95,7 @@ const TableCard: React.FC<Props> = ({ data, limitHours, isHighlighted, onGoToRep
     } else {
       setIsOverdue(false);
     }
-  }, [data.startedAt, limitHours, isChild]);
+  }, [data.orders.length, data.startedAt, limitHours, isChild]);
 
   // 실시간 업데이트 (1분마다 계산)
   useEffect(() => {
@@ -104,7 +124,7 @@ const TableCard: React.FC<Props> = ({ data, limitHours, isHighlighted, onGoToRep
     
     // 빈 테이블 차단 (입장시간 없고 주문도 없는 경우)
     if (!data.startedAt && data.orders.length === 0) {
-      alert("주문 내역이 없는 빈 테이블입니다.");
+      onShowToast?.("주문 내역이 없는 빈 테이블입니다.", "error");
       return;
     }
 
@@ -138,7 +158,7 @@ const TableCard: React.FC<Props> = ({ data, limitHours, isHighlighted, onGoToRep
           <p className="tableNumber">{displayTitle}</p>
         </div>
         {/* 병합된 자식 테이블은 시간 표시 생략 */}
-        <p className="orderTime">{(!isChild && data.startedAt) ? elapsedTime : ""}</p>
+        <p className="orderTime">{!isChild && data.orders.length > 0 ? elapsedTime : ""}</p>
       </S.TableInfo>
       
       <S.DivideLine />
