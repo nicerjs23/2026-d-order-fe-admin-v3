@@ -6,7 +6,7 @@ export const Wrapper = styled.form`
   width: 80%;
 
   display: grid;
-  grid-template-rows: 12fr 1fr;
+  grid-template-rows: 1fr auto;
 
   z-index: 10;
   background-color: ${({ theme }) => theme.colors.Gray01};
@@ -193,16 +193,18 @@ export const ModalConfirmContainer = styled.div`
   display: flex;
   flex-direction: row;
   border-top: 1px solid ${({ theme }) => theme.colors.Black02};
+
   button {
     width: 100%;
     box-sizing: border-box;
-    padding: 0.75rem 3rem;
+    padding: 1.25rem 3rem;
     display: flex;
     justify-content: center;
     align-items: center;
     color: ${({ theme }) => theme.colors.Orange01};
     &:disabled {
-      color: ${({ theme }) => theme.colors.Black02};
+      ${({ theme }) => theme.fonts.SemiBold16}
+      color: ${({ theme }) => theme.colors.Gray02};
     }
   }
   button:nth-child(1) {
@@ -210,6 +212,9 @@ export const ModalConfirmContainer = styled.div`
     border-right: 1px solid ${({ theme }) => theme.colors.Black02};
   }
   button:nth-child(2) {
+    &:disabled {
+      ${({ theme }) => theme.fonts.SemiBold16}
+    }
     ${({ theme }) => theme.fonts.ExtraBold16}
   }
 `;

@@ -95,7 +95,7 @@ export const CouponRegisterModal = ({ onClose }: { onClose: () => void }) => {
           취소
         </S.BottomBtn>
         <S.BottomBtn type='submit' disabled={!isReady} onClick={handleSubmit}>
-          쿠폰등록
+          쿠폰 등록
         </S.BottomBtn>
       </S.BottomBtnContainer>
     </S.Wrapper>

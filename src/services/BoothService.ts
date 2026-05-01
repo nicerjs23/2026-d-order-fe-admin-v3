@@ -5,18 +5,11 @@ export interface BoothNameResponse {
   data: { booth_name: string };
 }
 
-/**
- * 부스 관련 API 서비스
- */
 const BoothService = {
-  /**
-   * 부스 이름 조회 (GET /api/v3/django/booth/{booth_id}/name/)
-   */
-  getBoothName: async (
-    boothId: number | string,
-  ): Promise<BoothNameResponse> => {
+  // GET /api/v3/django/booth/name/ — 쿠키 인증, booth_id 불필요
+  getBoothName: async (): Promise<BoothNameResponse> => {
     const response = await instance.get<BoothNameResponse>(
-      `/api/v3/django/booth/${boothId}/name/`,
+      '/api/v3/django/booth/name/',
     );
     return response.data;
   },

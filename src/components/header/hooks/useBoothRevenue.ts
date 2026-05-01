@@ -133,14 +133,8 @@ const useBoothRevenue = () => {
     let aborted = false;
 
     const fetchBoothName = async () => {
-      const boothId =
-        localStorage.getItem('Booth-ID') ?? localStorage.getItem('boothId');
-      if (!boothId) {
-        setError('부스 정보가 없습니다.');
-        return;
-      }
       try {
-        const response = await BoothService.getBoothName(boothId);
+        const response = await BoothService.getBoothName();
         if (aborted) return;
         if (response?.data?.booth_name) {
           setError(null);
