@@ -209,7 +209,7 @@ export const OrderGroupHeader = styled.div`
     }
 
     .orderTime {
-        ${({ theme }) => css(theme.fonts.Medium14)};
+        ${({ theme }) => css(theme.fonts.Medium16)};
         color: ${({theme}) => theme.colors.Gray02};
     }
 `;

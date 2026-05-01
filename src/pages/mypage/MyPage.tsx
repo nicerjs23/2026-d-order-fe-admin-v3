@@ -22,7 +22,7 @@ import BottomActions from './components/BottomActions';
 
 import QR_icon from "@assets/icons/QR_icon.svg";
 import DataReset from "@assets/icons/dataReset.svg";
-import Logout from "@assets/icons/logout.svg";
+import MypageLogout from "@assets/icons/mypage_logout.svg";
 
 const SeatTypeLabel: Record<BoothMyPageData['seat_type'], string> = { PP: '인원 수', PT: '테이블', NO: '받지 않음' };
 const LabelToSeatType: Record<string, BoothMyPageData['seat_type']> = { '인원 수': 'PP', 테이블: 'PT', '받지 않음': 'NO' };
@@ -228,7 +228,7 @@ const MyPage = () => {
         </S.Row>
       </S.Container>
 
-      <BottomActions onClickReset={() => setShowResetModal(true)} onClickLogout={() => setShowLogoutModal(true)} resetIcon={DataReset} logoutIcon={Logout} />
+      <BottomActions onClickReset={() => setShowResetModal(true)} onClickLogout={() => setShowLogoutModal(true)} resetIcon={DataReset} logoutIcon={MypageLogout} />
 
       {showLogoutModal && <Modal title="정말 로그아웃 하시겠습니까?" onCancel={() => setShowLogoutModal(false)} onConfirm={handleLogout} confirmText="로그아웃" />}
       {showResetModal && <Modal title="정말 데이터를 포맷하시겠습니까?" onCancel={() => setShowResetModal(false)} onConfirm={handleReset} confirmText="포맷하기" />}

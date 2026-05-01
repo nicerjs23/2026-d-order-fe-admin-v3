@@ -6,7 +6,7 @@ const emptyOrder = () =>{
         <>
             <Container>
                 <ImageWrapper>
-                    <img src={IMAGE_CONSTANTS.CHARACTER} alt="아코얼굴" />
+                    <img src={IMAGE_CONSTANTS.DetailPageIcon} alt="아코얼굴" />
                 </ImageWrapper>
                 <TextWrapper>
                     아직 주문 내역이 없어요.
