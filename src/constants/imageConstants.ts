@@ -61,12 +61,15 @@ import MypageLogout from '@assets/icons/mypage_logout.svg';
 import DetailPageBackword from '@assets/icons/DetailPageBackword.svg';
 import DetailPageIcon from '@assets/icons/DetailPageLogo.png';
 
+import sadLion from '@assets/images/sad_lion.png';
+
 export const IMAGE_CONSTANTS = {
   LOGO: '/images/LogoV3.png',
   LOGO2: '/images/Logo2V3.png',
   CHARACTER: '/images/CharacterV3.png',
   NOMALCHARACTER: LOGOIMAGE,
   SIDECHARACTER: '/images/SideLogoV3.png',
+  SADLION: sadLion,
 
   FOOD_PIZZA: 'https://cdn-icons-png.flaticon.com/512/6978/6978255.png',
   FOOD_STEAK: 'https://cdn-icons-png.flaticon.com/512/3480/3480618.png',

@@ -1,3 +1,4 @@
+import theme from '@styles/theme';
 import styled, { css } from 'styled-components';
 
 export type OrderStatus =
@@ -126,13 +127,13 @@ export const SetPill = styled.span<{ $status: OrderStatus }>`
 /** 조리중·서빙수락: SemiBold15 / 서빙중·서빙완료: Medium16. 색상: 서빙중·서빙수락 #888888, 서빙완료 #C0C0C0, 조리중 Black01 */
 const menuQuantityStyles: Record<
   OrderStatus,
-  { font: 'SemiBold15' | 'Medium16'; color: string }
+  { font: 'SemiBold16' | 'Medium16'; color: string }
 > = {
-  조리중: { font: 'SemiBold15', color: '#2A2A2A' },
-  서빙중: { font: 'Medium16', color: '#888888' },
-  서빙완료: { font: 'Medium16', color: '#C0C0C0' },
-  서빙수락: { font: 'SemiBold15', color: '#888888' },
-  조리완료: { font: 'SemiBold15', color: '#888888' },
+  조리중: { font: 'SemiBold16', color: theme.colors.Black01 },
+  서빙중: { font: 'Medium16', color: theme.colors.Gray03 },
+  서빙완료: { font: 'Medium16', color: theme.colors.Focused },
+  서빙수락: { font: 'SemiBold16', color: theme.colors.Gray03 },
+  조리완료: { font: 'SemiBold16', color: theme.colors.Gray03 },
 };
 
 export const MenuName = styled.span<{ $status: OrderStatus }>`

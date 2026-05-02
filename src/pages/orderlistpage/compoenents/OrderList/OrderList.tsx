@@ -32,8 +32,8 @@ export default function OrderList({
     <S.OrderListWrapper>
       {isEmpty ? (
         <S.EmptyStateWrapper>
-          <S.EmptyStateImage src={IMAGE_CONSTANTS.NOMALCHARACTER} alt="" />
-          <S.EmptyStateText>{`요청이 없어요..\n이참에 쉬어볼까요?`}</S.EmptyStateText>
+          <S.EmptyStateImage src={IMAGE_CONSTANTS.SADLION} alt="" />
+          <S.EmptyStateText>{`요청이 없어요...\n이참에 쉬어볼까요?`}</S.EmptyStateText>
         </S.EmptyStateWrapper>
       ) : (
         orders.map((order, index) => (

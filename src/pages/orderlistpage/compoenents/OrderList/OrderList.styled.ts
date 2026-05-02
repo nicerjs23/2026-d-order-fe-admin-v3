@@ -42,7 +42,7 @@ export const EmptyStateImage = styled.img`
 export const EmptyStateText = styled.p`
   margin: 0;
   text-align: center;
-  ${({ theme }) => theme.fonts.Bold16};
+  ${({ theme }) => theme.fonts.Bold18};
   color: ${({ theme }) => theme.colors.Black02};
   line-height: 1.5;
   white-space: pre-line;

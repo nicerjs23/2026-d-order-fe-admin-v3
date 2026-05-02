@@ -164,10 +164,18 @@ export default function OrderListPage() {
       </S.LeftSide>
       <S.RightSide>
         <S.AmountSection $heightRatio={60}>
-          <AmountBox title="음식 집계" items={foodItems} />
+          <AmountBox
+            title="음식 집계"
+            items={foodItems}
+            emptyText="요청한 음식이 없어요"
+          />
         </S.AmountSection>
         <S.AmountSection $heightRatio={40}>
-          <AmountBox title="음료 집계" items={drinkItems} />
+          <AmountBox
+            title="음료 집계"
+            items={drinkItems}
+            emptyText="요청한 음료가 없어요"
+          />
         </S.AmountSection>
       </S.RightSide>
     </S.Wrapper>

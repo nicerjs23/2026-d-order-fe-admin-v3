@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
 export const AmountBoxWrapper = styled.div`
+  flex: 1;
+  min-height: 0;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -12,6 +14,8 @@ export const Section = styled.section`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  flex: 1;
+  min-height: 0;
 `;
 
 export const SectionTitle = styled.h2`
@@ -35,6 +39,27 @@ export const SectionList = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 0.875rem;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+`;
+
+/** 아래쪽 목록 영역만 채우고 기본 문구를 가운데 배치 */
+export const EmptyListArea = styled.div`
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 0.5rem;
+  box-sizing: border-box;
+`;
+
+export const EmptyListText = styled.p`
+  margin: 0;
+  text-align: center;
+  ${({ theme }) => theme.fonts.Medium16};
+  color: ${({ theme }) => theme.colors.Gray03};
 `;
 
 export const Row = styled.li`
