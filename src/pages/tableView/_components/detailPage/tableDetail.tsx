@@ -1,6 +1,5 @@
 // tableView/_components/detailPage/tableDetail.tsx
 import * as S from "./tableDetail.styled";
-import ACCO from "@assets/images/character.svg";
 import { IMAGE_CONSTANTS } from "@constants/imageConstants";
 import CancelMenuModal from "../../_modal/CancelMenuModal";
 import CancelConfirmModal from "../../_modal/CancelConfirmModal";
@@ -193,11 +192,11 @@ const TableDetail: React.FC<Props> = ({ data, onBack }) => {
                       <S.ContentContainer>
                         <S.ImageWrapper>
                           <img
-                            src={toImageUrl(order.menu_image) ?? ACCO}
+                            src={toImageUrl(order.menu_image) ?? IMAGE_CONSTANTS.SIDECHARACTER}
                             alt={order.menu_name}
                             onError={(e) => {
                               e.currentTarget.onerror = null;
-                              e.currentTarget.src = ACCO;
+                              e.currentTarget.src = IMAGE_CONSTANTS.SIDECHARACTER;
                             }}
                           />
                         </S.ImageWrapper>

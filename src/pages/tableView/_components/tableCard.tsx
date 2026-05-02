@@ -8,6 +8,7 @@ import { useTableSelection } from '../../../context/TableSelectionContext';
 // tableGrid에서 넘겨주는 데이터 타입을 여기서 명확히 정의하여 import 에러(순환참조 등) 방지
 export interface TableCardData {
   tableNumber: number;
+  status: "AVAILABLE" | "IN_USE" | string;
   totalAmount: number;
   orders: { menu: string; quantity: number }[];
   startedAt: string | null;
@@ -38,6 +39,7 @@ const TableCard: React.FC<Props> = ({
   const isMerged = !!data.group;
   const repNum = data.group?.representativeTable;
   const isChild = isMerged && repNum !== data.tableNumber;
+  const isInUse = data.status === "IN_USE";
 
   // 병합된 테이블이면 🔗 기호를 붙이고, 자식 테이블이면 대표 번호를 표시
   // ex) 2번(대표), 7번(자식), 32번(자식) 모두 "🔗 T 02"로 표시됨
@@ -50,10 +52,8 @@ const TableCard: React.FC<Props> = ({
   
   // 첫 주문 시간 기반으로 경과 시간 및 초과 여부 계산 로직
   const checkTimeAndStatus = useCallback(() => {
-    const hasOrders = data.orders.length > 0;
-
     // 자식 테이블은 시간을 계산하지 않음 (대표 테이블만 보여주면 됨)
-    if (isChild || !hasOrders) {
+    if (isChild || data.status !== "IN_USE") {
       setElapsedTime("00:00");
       setIsOverdue(false);
       return;
@@ -65,16 +65,15 @@ const TableCard: React.FC<Props> = ({
       return;
     }
 
-    const orderDate = new Date(data.startedAt);
-    const currentDate = new Date();
+    const startedDate = new Date(data.startedAt);
 
-    if (isNaN(orderDate.getTime())) {
+    if (Number.isNaN(startedDate.getTime())) {
       setElapsedTime("00:00");
       setIsOverdue(false);
       return;
     }
 
-    const diffInMs = currentDate.getTime() - orderDate.getTime();
+    const diffInMs = Date.now() - startedDate.getTime();
     if (diffInMs <= 0) {
       setElapsedTime("00:00");
       setIsOverdue(false);
@@ -85,17 +84,16 @@ const TableCard: React.FC<Props> = ({
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
 
-    const hh = isNaN(hours) ? "00" : String(hours).padStart(2, '0');
-    const mm = isNaN(minutes) ? "00" : String(minutes).padStart(2, '0');
-
-    setElapsedTime(`${hh}:${mm}`);
+    setElapsedTime(
+      `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`
+    );
 
     if (limitHours && limitHours > 0) {
       setIsOverdue(totalMinutes >= limitHours * 60);
     } else {
       setIsOverdue(false);
     }
-  }, [data.orders.length, data.startedAt, limitHours, isChild]);
+  }, [data.status, data.startedAt, limitHours, isChild]);
 
   // 실시간 업데이트 (1분마다 계산)
   useEffect(() => {
@@ -158,7 +156,7 @@ const TableCard: React.FC<Props> = ({
           <p className="tableNumber">{displayTitle}</p>
         </div>
         {/* 병합된 자식 테이블은 시간 표시 생략 */}
-        <p className="orderTime">{!isChild && data.orders.length > 0 ? elapsedTime : ""}</p>
+        <p className="orderTime">{!isChild && isInUse ? elapsedTime : ""}</p>
       </S.TableInfo>
       
       <S.DivideLine />
