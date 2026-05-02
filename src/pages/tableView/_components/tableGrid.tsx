@@ -15,6 +15,7 @@ interface Props {
 // 🌟 CardData에서 isOverdue를 제거하고 startedAt을 추가 (오버듀 계산은 Card 내부에서 실시간으로 처리)
 export interface TableOrder {
   tableNumber: number;
+  status: "AVAILABLE" | "IN_USE" | string;
   totalAmount: number;
   orders: { menu: string; quantity: number }[];
   startedAt: string | null; 
@@ -53,6 +54,7 @@ const TableViewGrid: React.FC<Props> = ({ tableList, onSelectTable, onShowToast 
       tableList.map((item) => {
         const viewData: TableOrder = {
           tableNumber: item.tableNum,
+          status: item.status,
           totalAmount: item.amount,
           orders: (item.latestOrders ?? []).map((o) => ({
             menu: o.name,
