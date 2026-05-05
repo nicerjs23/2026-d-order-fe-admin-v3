@@ -7,7 +7,7 @@ import check from '../../assets/icons/toastcheck.svg';
 
 import { getManagerInfo } from './apis/getManagers';
 import { patchManagerInfo, type BoothMyPageData } from './apis/getManagerPatch';
-import { downloadManagerQR } from './apis/getQRDownload';
+import { downloadManagerQRGrid } from './apis/getQRDownload';
 import { requestLogout } from './apis/logout';
 import { redirectToLoginPage } from '@utils/redirectToLoginPage';
 import { resetTableData } from './apis/resetTableData';
@@ -154,7 +154,7 @@ const MyPage = () => {
 
   const handleQrClick = async () => {
     try {
-      await downloadManagerQR();
+      await downloadManagerQRGrid(my?.name ?? '');
       toast.success('QR코드 다운로드가 완료되었어요!', { icon: <img src={check} alt="체크" />, closeButton: false, style: toToastStyle() });
     } catch (err: any) {
       toast.error(err?.message || 'QR코드 다운로드에 실패했습니다.', { closeButton: false, style: toToastStyle() });
