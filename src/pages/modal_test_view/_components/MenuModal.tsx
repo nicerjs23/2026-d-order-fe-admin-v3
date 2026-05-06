@@ -24,7 +24,7 @@ interface MenuModalProps {
 }
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 업로드 이미지 크기 제한 10MB
-const MIN_FILE_SIZE = 2.5 * 1024 * 1024;
+const MIN_FILE_SIZE = 1 * 1024 * 1024;
 
 type SetItem = {
   menuId: number | null;
@@ -195,7 +195,10 @@ const MenuModal = ({ handleCloseModal, boothMenuData }: MenuModalProps) => {
 
         await MenuServiceWithImg.createSetMenu(formData);
       } else {
-        const categoryMap: Record<string, string> = { '메뉴': 'MENU', '음료': 'DRINK' };
+        const categoryMap: Record<string, string> = {
+          메뉴: 'MENU',
+          음료: 'DRINK',
+        };
         const formData = new FormData();
         formData.append('name', name);
         formData.append('description', desc || '');
