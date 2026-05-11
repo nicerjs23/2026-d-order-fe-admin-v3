@@ -7,7 +7,7 @@ import check from '../../assets/icons/toastcheck.svg';
 
 import { getManagerInfo } from './apis/getManagers';
 import { patchManagerInfo, type BoothMyPageData } from './apis/getManagerPatch';
-import { downloadManagerQRGrid } from './apis/getQRDownload';
+import { downloadManagerQRGrid, getManagerQRUrl } from './apis/getQRDownload';
 import { requestLogout } from './apis/logout';
 import { redirectToLoginPage } from '@utils/redirectToLoginPage';
 import { resetTableData } from './apis/resetTableData';
@@ -23,6 +23,8 @@ import BottomActions from './components/BottomActions';
 import QR_icon from "@assets/icons/QR_icon.svg";
 import DataReset from "@assets/icons/dataReset.svg";
 import MypageLogout from "@assets/icons/mypage_logout.svg";
+import ServerIcon from "@assets/icons/serverIcon.png";
+import CustomerIcon from "@assets/icons/customerIcon.png";
 
 const SeatTypeLabel: Record<BoothMyPageData['seat_type'], string> = { PP: '인원 수', PT: '테이블', NO: '받지 않음' };
 const LabelToSeatType: Record<string, BoothMyPageData['seat_type']> = { '인원 수': 'PP', 테이블: 'PT', '받지 않음': 'NO' };
@@ -152,6 +154,21 @@ const MyPage = () => {
 
   const toToastStyle = () => ({ backgroundColor: '#FF6E3F', color: '#FAFAFA', fontSize: '1rem', fontWeight: 800 as const, borderRadius: '8px', padding: '0.75rem 0.875rem' });
 
+  const handleServerShortcut = () => {
+    window.open('https://server.dorder-api.shop/', '_blank');
+  };
+
+  const handleCustomerShortcut = async () => {
+    try {
+      const qrUrl = await getManagerQRUrl();
+      const match = qrUrl.match(/booth_([a-f0-9-]+)_qr\.png/);
+      if (!match) throw new Error('부스 식별자를 찾을 수 없습니다.');
+      window.open(`https://customer.dorder-api.shop/?id=${match[1]}`, '_blank');
+    } catch (err: any) {
+      toast.error(err?.message || '커스터머 페이지를 열 수 없습니다.', { closeButton: false, style: toToastStyle() });
+    }
+  };
+
   const handleQrClick = async () => {
     try {
       await downloadManagerQRGrid(my?.name ?? '');
@@ -228,7 +245,16 @@ const MyPage = () => {
         </S.Row>
       </S.Container>
 
-      <BottomActions onClickReset={() => setShowResetModal(true)} onClickLogout={() => setShowLogoutModal(true)} resetIcon={DataReset} logoutIcon={MypageLogout} />
+      <BottomActions
+        onClickServer={handleServerShortcut}
+        onClickCustomer={handleCustomerShortcut}
+        onClickReset={() => setShowResetModal(true)}
+        onClickLogout={() => setShowLogoutModal(true)}
+        serverIcon={ServerIcon}
+        customerIcon={CustomerIcon}
+        resetIcon={DataReset}
+        logoutIcon={MypageLogout}
+      />
 
       {showLogoutModal && <Modal title="정말 로그아웃 하시겠습니까?" onCancel={() => setShowLogoutModal(false)} onConfirm={handleLogout} confirmText="로그아웃" />}
       {showResetModal && <Modal title="정말 데이터를 포맷하시겠습니까?" onCancel={() => setShowResetModal(false)} onConfirm={handleReset} confirmText="포맷하기" />}
