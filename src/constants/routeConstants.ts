@@ -8,7 +8,6 @@ export const ROUTE_PATHS = {
   MYPAGE: "/mypage",
   MENU: "/menu",
   COUPON: "/coupon",
-  DASHBOARD: "/dashboard",
 };
 
 //근우 경로설정

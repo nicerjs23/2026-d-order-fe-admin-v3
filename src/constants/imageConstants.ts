@@ -20,8 +20,7 @@ import Nav_my from '../assets/icons/navMyV3.svg';
 import Nav_my_active from '../assets/icons/navMyActiveV3.svg';
 import Nav_coupon from '../assets/icons/navCouponV3.svg';
 import Nav_coupon_active from '../assets/icons/navCouponActiveV3.svg';
-import Nav_dashboard from '../assets/icons/navDashboard.svg';
-import Nav_dashboard_active from '../assets/icons/navDashboardActive.svg';
+
 
 import BroomIcon from '../assets/icons/broom-icon.svg';
 import MergeIcon from '../assets/icons/merge-icon.svg';
@@ -104,9 +103,6 @@ export const IMAGE_CONSTANTS = {
   NAV_MY_ACTIVE: Nav_my_active,
   NAV_COUPON: Nav_coupon,
   NAV_COUPON_ACTIVE: Nav_coupon_active,
-  NAV_DASHBOARD: Nav_dashboard,
-  NAV_DASHBOARD_ACTIVE: Nav_dashboard_active,
-
   Broom_Icon: BroomIcon,
   Merge_Icon: MergeIcon,
 

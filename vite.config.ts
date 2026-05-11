@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
   // .env에서 VITE_BASE_URL을 읽어 로컬 개발용 proxy target으로 사용
   const env = loadEnv(mode, process.cwd(), '');
   const apiTarget =
-    env.VITE_BASE_URL?.replace(/\/+$/, '') || 'https://dev.dorder-api.shop';
+    env.VITE_BASE_URL?.replace(/\/+$/, '') || 'https://prod.dorder-api.shop';
 
   return {
     plugins: [react(), basicSsl()],
@@ -22,19 +22,18 @@ export default defineConfig(({ mode }) => {
           // localhost는 해당 도메인이 아니라 브라우저가 쿠키를 거부함.
           // cookieDomainRewrite로 localhost가 쿠키를 수락하도록 도메인 재작성.
           cookieDomainRewrite: { '.dorder-api.shop': 'localhost' },
+          // prod Django의 CSRF_TRUSTED_ORIGINS에 localhost가 없으므로
+          // Referer/Origin을 prod 도메인으로 덮어써서 403 방지
+          headers: { Referer: apiTarget, Origin: apiTarget },
         },
-        '/api/v2': {
-          target: apiTarget,
-          changeOrigin: true,
-          cookieDomainRewrite: { '.dorder-api.shop': 'localhost' },
-        },
-        // WebSocket proxy: wss://localhost:5173/ws/... → wss://dev.dorder-api.shop/ws/...
+        // WebSocket proxy: wss://localhost:5173/ws/... → wss://prod.dorder-api.shop/ws/...
         // localhost 쿠키를 백엔드에 그대로 전달하기 위해 vite proxy 경유 필수
         '/ws': {
           target: apiTarget,
           changeOrigin: true,
           ws: true,
           cookieDomainRewrite: { '.dorder-api.shop': 'localhost' },
+          headers: { Referer: apiTarget, Origin: apiTarget },
         },
       },
     },
@@ -48,7 +47,7 @@ export default defineConfig(({ mode }) => {
         '@constants': path.resolve(__dirname, 'src/constants'),
         '@assets': path.resolve(__dirname, 'src/assets'),
         '@services': path.resolve(__dirname, 'src/services'),
-      '@utils': path.resolve(__dirname, 'src/utils'),
+        '@utils': path.resolve(__dirname, 'src/utils'),
       },
     },
   };

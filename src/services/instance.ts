@@ -19,16 +19,6 @@ export const instance: AxiosInstance = axios.create({
   timeout: 10000,
 });
 
-// V2 인스턴스: 절대경로 baseURL로 직접 요청 (v3 전환 완료 시 제거 예정)
-export const instanceV2: AxiosInstance = axios.create({
-  baseURL: (import.meta.env.VITE_BASE_URL ?? '').replace(/\/+$/, ''),
-  withCredentials: false,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  timeout: 10000,
-});
-
 // V3 이미지 업로드 인스턴스
 export const instatnceWithImg: AxiosInstance = axios.create({
   baseURL: '/',
@@ -40,10 +30,6 @@ export const instatnceWithImg: AxiosInstance = axios.create({
   },
   timeout: 10000,
 });
-
-const isAuthEndpoint = (url?: string) =>
-  url?.includes('/api/v2/manager/auth/') ||
-  url?.includes('/api/v3/django/auth/');
 
 const isCsrfTokenEndpoint = (url?: string) =>
   url?.includes('/api/v3/django/auth/csrf-token/');
@@ -72,42 +58,10 @@ const fetchCsrfToken = async (): Promise<string | null> => {
 };
 
 // ============================================
-// [V2] 요청 / 응답 인터셉터
-// ============================================
-instanceV2.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken');
-  const isV2AuthEndpoint =
-    config.url?.includes('/api/v2/manager/auth/') ||
-    config.url?.includes('/api/v2/manager/signup/');
-  if (token && !isV2AuthEndpoint) {
-    config.headers['Authorization'] = `Bearer ${token}`;
-  }
-  return config;
-});
-
-instanceV2.interceptors.response.use(
-  (res) => res,
-  (error: AxiosError) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('accessToken');
-      redirectToLoginPage();
-    }
-    return Promise.reject(error);
-  }
-);
-
-// ============================================
 // [V3] 공통 요청 인터셉터 (instance, instatnceWithImg)
 // ============================================
 const v3RequestInterceptor = async (config: InternalAxiosRequestConfig) => {
-  const token = localStorage.getItem('accessToken');
   const isV3Request = config.url?.includes('/api/v3/');
-
-  // 🚨 [핵심 수정]: V3 API는 쿠키 기반이므로 Authorization 헤더를 절대 주입하지 않음!
-  // (V2와 V3가 섞여 있으면, 헤더에 Bearer 토큰 주입)
-  if (token && !isAuthEndpoint(config.url) && !isV3Request) {
-    config.headers['Authorization'] = `Bearer ${token}`;
-  }
 
   // V3 unsafe 메서드일 때 CSRF 토큰 주입
   if (isV3Request && isUnsafeMethod(config.method) && !isCsrfTokenEndpoint(config.url)) {
@@ -208,8 +162,7 @@ const v3ResponseErrorInterceptor = async (error: AxiosError, client: AxiosInstan
   const originalRequest: any = error.config;
 
   if (
-    (originalRequest.url?.includes('/api/v2/manager/auth/') ||
-      originalRequest.url?.includes('/api/v3/django/auth/refresh/')) &&
+    originalRequest.url?.includes('/api/v3/django/auth/refresh/') &&
     error.response?.status === 401
   ) {
     clearTokens();
@@ -230,11 +183,7 @@ const v3ResponseErrorInterceptor = async (error: AxiosError, client: AxiosInstan
     if (isRefreshing) {
       return new Promise((resolve, reject) => {
         failedQueue.push({
-          resolve: (token: string | null) => {
-            // V3 API가 아니면 헤더에 토큰 다시 세팅
-            if (token && !originalRequest.url?.includes('/api/v3/')) {
-              originalRequest.headers['Authorization'] = `Bearer ${token}`;
-            }
+          resolve: (_token: string | null) => {
             resolve(client(originalRequest));
           },
           reject,
@@ -245,24 +194,10 @@ const v3ResponseErrorInterceptor = async (error: AxiosError, client: AxiosInstan
     originalRequest._retry = true;
     isRefreshing = true;
 
-    const isV3Request = originalRequest.url?.includes('/api/v3/');
-
     try {
-      if (isV3Request) {
-        await UserService.refreshTokenV3();
-        processQueue(null, null);
-        return client(originalRequest);
-      } else {
-        const res = await instanceV2.get('/api/v2/manager/auth/');
-        const newAccessToken = res.data?.data?.access;
-        if (!newAccessToken) throw new Error('토큰이 응답에 없습니다.');
-
-        localStorage.setItem('accessToken', newAccessToken);
-        processQueue(newAccessToken, null);
-
-        originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-        return client(originalRequest);
-      }
+      await UserService.refreshTokenV3();
+      processQueue(null, null);
+      return client(originalRequest);
     } catch (err) {
       processQueue(null, err as AxiosError);
       clearTokens();
