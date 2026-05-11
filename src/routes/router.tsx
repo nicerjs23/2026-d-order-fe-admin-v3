@@ -15,7 +15,6 @@ import TableViewPage from '@pages/tableView/TableViewPage';
 import MyPage from '@pages/mypage/MyPage';
 import MenuPage from '@pages/menu/MenuPage';
 import CouponPage from '@pages/coupon/CouponPage';
-import DashboardPage from '@pages/dashboard/DashboardPage';
 import { ROUTE_PATHS } from '@constants/routeConstants';
 import OrderListPage from '@pages/orderlistpage/OrderListPage';
 import TableDetailPage from '@pages/tableView/TableDetailPage';
@@ -40,7 +39,6 @@ const router = createBrowserRouter([
       { path: ROUTE_PATHS.MYPAGE, element: <MyPage /> },
       { path: ROUTE_PATHS.MENU, element: <MenuPage /> },
       { path: ROUTE_PATHS.COUPON, element: <CouponPage /> },
-      { path: ROUTE_PATHS.DASHBOARD, element: <DashboardPage /> },
     ],
   },
   {
