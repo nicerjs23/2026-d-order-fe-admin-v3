@@ -154,8 +154,16 @@ const MyPage = () => {
 
   const toToastStyle = () => ({ backgroundColor: '#FF6E3F', color: '#FAFAFA', fontSize: '1rem', fontWeight: 800 as const, borderRadius: '8px', padding: '0.75rem 0.875rem' });
 
+  const getServiceUrl = (service: 'server' | 'customer') => {
+    const hostname = window.location.hostname;
+    if (hostname.endsWith('.netlify.app')) {
+      return `https://${hostname.replace('-admin', `-${service}`)}/`;
+    }
+    return `https://${service}.dorder-api.shop/`;
+  };
+
   const handleServerShortcut = () => {
-    window.open('https://server.dorder-api.shop/', '_blank');
+    window.open(getServiceUrl('server'), '_blank');
   };
 
   const handleCustomerShortcut = async () => {
@@ -163,7 +171,7 @@ const MyPage = () => {
       const qrUrl = await getManagerQRUrl();
       const match = qrUrl.match(/booth_([a-f0-9-]+)_qr\.png/);
       if (!match) throw new Error('부스 식별자를 찾을 수 없습니다.');
-      window.open(`https://customer.dorder-api.shop/?id=${match[1]}`, '_blank');
+      window.open(`${getServiceUrl('customer')}?id=${match[1]}`, '_blank');
     } catch (err: any) {
       toast.error(err?.message || '커스터머 페이지를 열 수 없습니다.', { closeButton: false, style: toToastStyle() });
     }
