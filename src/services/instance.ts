@@ -7,9 +7,9 @@ import axios, {
 import UserService from './UserService';
 import { redirectToLoginPage } from '@utils/redirectToLoginPage';
 
-// V3 인스턴스: 상대경로 baseURL → vite proxy(로컬) / netlify redirect(배포) 경유
+// V3 인스턴스: VITE_BASE_URL 설정 시 직접 CORS 요청, 미설정 시 vite proxy(로컬) / netlify redirect(배포) 경유
 export const instance: AxiosInstance = axios.create({
-  baseURL: '/',
+  baseURL: import.meta.env.VITE_BASE_URL || '/',
   withCredentials: true,
   xsrfCookieName: 'csrftoken',
   xsrfHeaderName: 'X-CSRFToken',
@@ -21,7 +21,7 @@ export const instance: AxiosInstance = axios.create({
 
 // V3 이미지 업로드 인스턴스
 export const instatnceWithImg: AxiosInstance = axios.create({
-  baseURL: '/',
+  baseURL: import.meta.env.VITE_BASE_URL || '/',
   withCredentials: true,
   xsrfCookieName: 'csrftoken',
   xsrfHeaderName: 'X-CSRFToken',
