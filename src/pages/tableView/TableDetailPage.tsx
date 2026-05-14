@@ -10,6 +10,30 @@ import Toast from "@components/ToastMessage/Toast";
 // 🌟 상세 전용 웹소켓 훅 임포트
 import { useTableDetailWS } from "./_ws/useTableDetailWS";
 
+const shouldNavigateOnReset = (data: unknown, currentTableNum: number) => {
+  if (!data || typeof data !== "object") return true;
+
+  const record = data as Record<string, unknown>;
+  const resetTableNum =
+    record.table_num ??
+    record.tableNum ??
+    record.table_number ??
+    record.tableNumber;
+
+  if (resetTableNum != null) {
+    return Number(resetTableNum) === currentTableNum;
+  }
+
+  const resetTableNums = record.table_nums;
+  if (Array.isArray(resetTableNums)) {
+    return resetTableNums.some(
+      (tableNum) => Number(tableNum) === currentTableNum
+    );
+  }
+
+  return true;
+};
+
 const TableDetailPage = () => {
   const { tableNum } = useParams();
   const navigate = useNavigate();
@@ -35,6 +59,16 @@ const TableDetailPage = () => {
       console.log("[TableDetail WS] order_update received → refetch");
       refetch();
       setToastMsg("🔔 새로운 주문이 추가되었습니다!");
+    },
+    onResetTable: (data) => {
+      if (!shouldNavigateOnReset(data, parsedNum)) return;
+
+      navigate("/table-view", {
+        replace: true,
+        state: {
+          resetToastMessage: "해당 테이블은 초기화되었습니다.",
+        },
+      });
     },
     onError: (error) => {
       console.error(`[WS 상세-${parsedNum}] 서버 에러 이벤트`, error);

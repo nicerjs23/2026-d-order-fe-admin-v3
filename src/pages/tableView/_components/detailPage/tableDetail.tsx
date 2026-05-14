@@ -192,7 +192,7 @@ const TableDetail: React.FC<Props> = ({ data, onBack }) => {
                       <S.ContentContainer>
                         <S.ImageWrapper>
                           <img
-                            src={toImageUrl(order.menu_image) ?? IMAGE_CONSTANTS.SIDECHARACTER}
+                            src={toImageUrl(order.menu_image) ?? IMAGE_CONSTANTS.NOMALCHARACTER}
                             alt={order.menu_name}
                             onError={(e) => {
                               e.currentTarget.onerror = null;

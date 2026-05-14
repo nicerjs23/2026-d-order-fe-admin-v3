@@ -11,6 +11,7 @@ interface UseTableDetailWSOptions {
   table_num?: number;
   onConnectionEstablished?: (data: ConnectionEstablishedEvent["data"]) => void;
   onOrderUpdate?: (data: unknown) => void;
+  onResetTable?: (data: unknown) => void;
   onError?: (data: WsErrorEvent["data"]) => void;
 }
 
@@ -21,7 +22,7 @@ const isFiniteTableNum = (value: number | undefined): value is number =>
   typeof value === "number" && Number.isFinite(value) && value > 0;
 
 const buildTableDetailWsUrl = (tableNum: number): string => {
-  const path = `/ws/django/tables/${tableNum}`;
+  const path = `/ws/django/booth/tables/${tableNum}/`;
   const fromUtil = getWsUrl(path);
 
   if (fromUtil) return fromUtil;
@@ -35,6 +36,7 @@ export const useTableDetailWS = ({
   table_num,
   onConnectionEstablished,
   onOrderUpdate,
+  onResetTable,
   onError,
 }: UseTableDetailWSOptions) => {
   const socketRef = useRef<WebSocket | null>(null);
@@ -108,6 +110,12 @@ export const useTableDetailWS = ({
               );
               onOrderUpdate?.(payload.data);
               break;
+            case "reset_table":
+              console.log(
+                `[WS:TableDetail-${resolvedTableNum}] reset_table received`
+              );
+              onResetTable?.(payload.data);
+              break;
             case "ERROR":
               console.error(
                 `[WS:TableDetail-${resolvedTableNum}] ERROR event`,
@@ -167,7 +175,13 @@ export const useTableDetailWS = ({
       clearReconnectTimer();
       cleanupSocketRef();
     };
-  }, [resolvedTableNum, onConnectionEstablished, onOrderUpdate, onError]);
+  }, [
+    resolvedTableNum,
+    onConnectionEstablished,
+    onOrderUpdate,
+    onResetTable,
+    onError,
+  ]);
 
   return { socket: socketRef.current };
 };

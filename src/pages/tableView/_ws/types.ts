@@ -59,6 +59,7 @@ export type WsErrorEvent = BaseWSPayload<
 
 export type TableDetailWSPayload =
     | ConnectionEstablishedEvent
+    | WsResetTable
     | OrderUpdateEvent
     | WsErrorEvent;
 
