@@ -143,7 +143,12 @@ const MyPage = () => {
       if (!res) throw new Error('수정 결과가 없습니다.');
       toast.success('저장되었습니다.', { icon: <img src={check} alt="체크" />, closeButton: false, style: toToastStyle() });
       await reload();
-      if (f === 'storeName') setEditingName(false);
+      if (f === 'storeName') {
+        setEditingName(false);
+        window.setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      }
       if (f === 'account') setEditingAccount(false);
       if (f === 'seat') setEditingSeat(false);
       if (f === 'time') setEditingTime(false);
