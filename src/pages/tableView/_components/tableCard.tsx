@@ -178,7 +178,7 @@ const TableCard: React.FC<Props> = ({
       <S.MenuContainer>
         <S.MenuList>
           {data.orders.length === 0 && (
-            <S.EmptyImage src={IMAGE_CONSTANTS.SIDECHARACTER} alt="빈 테이블" />
+            <S.EmptyImage src={IMAGE_CONSTANTS.NOMALCHARACTER} alt="빈 테이블" />
           )}
 
           {data.orders.slice(0, 3).map((order, idx) => (
