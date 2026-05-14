@@ -106,7 +106,22 @@ const TableCard: React.FC<Props> = ({
     return () => clearInterval(timer);
   }, [checkTimeAndStatus]);
   
-  const handleCheckboxChange = () => {
+  const handleTableInfoClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (isChild) {
+      if (repNum && onGoToRepresentative) {
+        onGoToRepresentative(repNum);
+      }
+      return;
+    }
+
+    toggleTableSelection(data.tableNumber);
+  };
+
+  const handleCheckboxClick = (e: React.MouseEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+    if (isChild) return;
     toggleTableSelection(data.tableNumber);
   };
 
@@ -142,15 +157,15 @@ const TableCard: React.FC<Props> = ({
         transition: "all 0.3s ease-out"
       } : { transition: "all 0.3s ease-out" }}
     >
-      <S.TableInfo $isOverdue={isOverdue}>
+      <S.TableInfo $isOverdue={isOverdue} onClick={handleTableInfoClick}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           {/* 종속된 자식 테이블은 체크박스를 숨겨서 중복 선택 및 초기화 오류 방지 */}
           {!isChild && (
             <input 
               type="checkbox" 
               checked={isSelected}
-              onChange={handleCheckboxChange} 
-              onClick={(e) => e.stopPropagation()} 
+              readOnly
+              onClick={handleCheckboxClick}
             />
           )}
           <p className="tableNumber">{displayTitle}</p>
