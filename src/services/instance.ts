@@ -51,7 +51,23 @@ const isUnsafeMethod = (method?: string) => {
   return !['GET', 'HEAD', 'OPTIONS', 'TRACE'].includes(m);
 };
 
+// 백엔드가 host-only 쿠키로 전환된 이후에도 과거에 부모 도메인으로 박힌 잔재 쿠키가
+// 브라우저에 남아 있으면 csrftoken이 두 개가 되어 CSRF 검증이 깨진다.
+// 백엔드 clear_stale_domain_cookies helper가 99% 처리하지만, JS 측에서도 한 번 더
+// 알려진 옛 Domain 변형들로 expire 시도해 안전망을 한다 (지울 수 없으면 no-op).
+const stripStaleCsrfCookies = () => {
+  const past = 'expires=Thu, 01 Jan 1970 00:00:00 GMT';
+  const domains = ['.dorder-api.shop', 'dorder-api.shop', 'dev.dorder-api.shop', '.dev.dorder-api.shop'];
+  const names = ['csrftoken', 'sessionid'];
+  for (const d of domains) {
+    for (const n of names) {
+      document.cookie = `${n}=; ${past}; path=/; domain=${d}`;
+    }
+  }
+};
+
 const fetchCsrfToken = async (): Promise<string | null> => {
+  stripStaleCsrfCookies();
   const res = await instance.get('/api/v3/django/auth/csrf-token/');
   const token = res.data?.csrfToken;
   return typeof token === 'string' ? token : null;
