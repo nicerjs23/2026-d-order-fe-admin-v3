@@ -57,7 +57,14 @@ const isUnsafeMethod = (method?: string) => {
 // 알려진 옛 Domain 변형들로 expire 시도해 안전망을 한다 (지울 수 없으면 no-op).
 const stripStaleCsrfCookies = () => {
   const past = 'expires=Thu, 01 Jan 1970 00:00:00 GMT';
-  const domains = ['.dorder-api.shop', 'dorder-api.shop', 'dev.dorder-api.shop', '.dev.dorder-api.shop'];
+  const domains = [
+    '.dorder-api.shop',
+    'dorder-api.shop',
+    'dev.dorder-api.shop',
+    '.dev.dorder-api.shop',
+    'prod.dorder-api.shop',
+    '.prod.dorder-api.shop',
+  ];
   const names = ['csrftoken', 'sessionid'];
   for (const d of domains) {
     for (const n of names) {
