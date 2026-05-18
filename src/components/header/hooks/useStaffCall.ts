@@ -4,18 +4,31 @@ import { BellPlayer } from "../BellPlayer";
 import { Notification, NotificationType } from "../dummy/dummyNotifications";
 import { useAuthStore } from "../../../stores/authStore";
 
+const PING_INTERVAL_MS = 30_000;
+const PONG_DEADLINE_MS = 3_000;
+const RECONNECT_DELAY_MS = 1_500;
+const LIST_LIMIT = 50;
+
 interface StaffCallWsItem {
-  id: number;
-  call_type: string;
-  table_num?: number;
+  staff_call_id: number;
   table_id?: number;
+  table_num?: number;
+  cart_id?: number;
+  call_type: string;
+  category?: string;
+  status: string;
   created_at?: string;
-  status?: string;
+  accepted_at?: string;
+  accepted_by?: string;
+  completed_at?: string;
 }
 
 interface StaffCallWsMessage {
   type: string;
   data?: StaffCallWsItem[];
+  total?: number;
+  has_more?: boolean;
+  message?: string;
 }
 
 const mapCallType = (callType: string): NotificationType => {
@@ -26,7 +39,7 @@ const mapCallType = (callType: string): NotificationType => {
 const mapToNotification = (item: StaffCallWsItem): Notification => {
   const s = (item.status ?? "").toUpperCase();
   return {
-    id: item.id,
+    id: item.staff_call_id,
     tableNumber: `T ${item.table_num ?? item.table_id ?? "?"}`,
     type: mapCallType(item.call_type),
     createdAt: item.created_at ? new Date(item.created_at) : new Date(),
@@ -46,66 +59,162 @@ export const useStaffCall = () => {
   const knownIdsRef = useRef<Set<number>>(new Set());
 
   useEffect(() => {
-    console.log("[StaffCall WS] booth_id:", booth_id);
     if (!booth_id) {
-      console.warn("[StaffCall WS] booth_id 없음 → 연결 안함");
+      console.warn("[staffcall ws] skip — booth_id not ready");
       return;
     }
 
     BellPlayer.ensureUnlocked();
 
-    const url = getWsUrl(`/ws/server/staffcall`);
-    console.log("[StaffCall WS] 연결 시도:", url);
+    let cancelled = false;
+    let ws: WebSocket | null = null;
+    let pingTimerId: ReturnType<typeof setTimeout> | null = null;
+    let pongDeadlineId: ReturnType<typeof setTimeout> | null = null;
+    let reconnectTimerId: ReturnType<typeof setTimeout> | null = null;
 
-    const ws = new WebSocket(url);
-
-    ws.onopen = () => {
-      console.log("[StaffCall WS] 연결 성공 ✅");
-      const payload = { type: "LIST", limit: 50, offset: 0 };
-      console.log("[StaffCall WS] LIST 요청 전송:", payload);
-      ws.send(JSON.stringify(payload));
+    const clearTimer = (id: ReturnType<typeof setTimeout> | null) => {
+      if (id !== null) clearTimeout(id);
+    };
+    const clearAllTimers = () => {
+      clearTimer(pingTimerId);
+      pingTimerId = null;
+      clearTimer(pongDeadlineId);
+      pongDeadlineId = null;
+      clearTimer(reconnectTimerId);
+      reconnectTimerId = null;
     };
 
-    ws.onmessage = (event) => {
-      console.log("[StaffCall WS] 메시지 수신 (raw):", event.data);
-      try {
-        const msg: StaffCallWsMessage = JSON.parse(event.data);
-        console.log("[StaffCall WS] 파싱된 메시지:", msg);
+    const armPongDeadline = () => {
+      clearTimer(pongDeadlineId);
+      pongDeadlineId = setTimeout(() => {
+        if (cancelled) return;
+        console.warn("[staffcall ws] pong timeout → force close");
+        try {
+          ws?.close();
+        } catch {
+          /* noop */
+        }
+      }, PONG_DEADLINE_MS);
+    };
+
+    const schedulePing = () => {
+      clearTimer(pingTimerId);
+      pingTimerId = setTimeout(() => {
+        if (cancelled || !ws || ws.readyState !== WebSocket.OPEN) return;
+        try {
+          ws.send(JSON.stringify({ type: "PING" }));
+          armPongDeadline();
+        } catch (err) {
+          console.error("[staffcall ws] ping send failed", err);
+        }
+      }, PING_INTERVAL_MS);
+    };
+
+    const handleSnapshot = (items: StaffCallWsItem[]) => {
+      const mapped = items
+        .map(mapToNotification)
+        .filter((n) => typeof n.id === "number" && Number.isFinite(n.id));
+
+      const newPending = mapped.filter(
+        (n) => !n.isProcessed && !knownIdsRef.current.has(n.id),
+      );
+      mapped.forEach((n) => knownIdsRef.current.add(n.id));
+
+      console.log(
+        `[staffcall ws] snapshot count=${mapped.length} newPending=${newPending.length}`,
+      );
+
+      if (newPending.length > 0) {
+        BellPlayer.play();
+        const first = newPending[0];
+        console.log(
+          `[staffcall ws] alert tableNumber=${first.tableNumber} type=${first.type}`,
+        );
+        setLiveNotice(`${first.tableNumber} ${first.type}`);
+        setShowLiveNotice(true);
+        setTimeout(() => setShowLiveNotice(false), 4000);
+        setHasUnread(true);
+      }
+
+      setNotifications(mapped);
+    };
+
+    const connect = () => {
+      if (cancelled) return;
+      const url = getWsUrl(`/ws/server/staffcall`);
+      console.log(`[staffcall ws] connect url=${url}`);
+
+      ws = new WebSocket(url);
+
+      ws.onopen = () => {
+        if (cancelled) {
+          ws?.close();
+          return;
+        }
+        console.log("[staffcall ws] open");
+        try {
+          ws?.send(JSON.stringify({ type: "LIST", limit: LIST_LIMIT, offset: 0 }));
+        } catch (err) {
+          console.error("[staffcall ws] LIST send failed", err);
+        }
+        schedulePing();
+      };
+
+      ws.onmessage = (event) => {
+        if (cancelled) return;
+        let msg: StaffCallWsMessage;
+        try {
+          msg = JSON.parse(event.data);
+        } catch (err) {
+          console.error("[staffcall ws] parse error", err);
+          return;
+        }
+
+        if (msg.type === "PONG") {
+          clearTimer(pongDeadlineId);
+          pongDeadlineId = null;
+          schedulePing();
+          return;
+        }
 
         if (msg.type === "LIST_RESULT" || msg.type === "STAFF_CALL_SNAPSHOT") {
-          const mapped = (msg.data ?? []).map(mapToNotification);
-          console.log("[StaffCall WS] 매핑된 notifications:", mapped);
-
-          const newPending = mapped.filter(
-            (n) => !n.isProcessed && !knownIdsRef.current.has(n.id)
-          );
-          console.log("[StaffCall WS] 신규 미처리 항목:", newPending);
-          mapped.forEach((n) => knownIdsRef.current.add(n.id));
-
-          if (newPending.length > 0) {
-            BellPlayer.play();
-            const first = newPending[0];
-            setLiveNotice(`${first.tableNumber} ${first.type}`);
-            setShowLiveNotice(true);
-            setTimeout(() => setShowLiveNotice(false), 4000);
-            setHasUnread(true);
-          }
-
-          setNotifications(mapped);
-        } else {
-          console.warn("[StaffCall WS] 미처리 메시지 타입:", msg.type);
+          handleSnapshot(msg.data ?? []);
+          return;
         }
-      } catch (err) {
-        console.error("[StaffCall WS] 메시지 파싱 오류:", err);
-      }
+      };
+
+      ws.onerror = () => {
+        console.error("[staffcall ws] error");
+      };
+
+      ws.onclose = (e) => {
+        clearTimer(pingTimerId);
+        pingTimerId = null;
+        clearTimer(pongDeadlineId);
+        pongDeadlineId = null;
+
+        const willReconnect = !cancelled;
+        console.log(
+          `[staffcall ws] close code=${e.code} reason=${e.reason || ""} willReconnect=${willReconnect}`,
+        );
+
+        if (willReconnect) {
+          console.log(`[staffcall ws] reconnect in ${RECONNECT_DELAY_MS}ms`);
+          reconnectTimerId = setTimeout(connect, RECONNECT_DELAY_MS);
+        }
+      };
     };
 
-    ws.onerror = (e) => console.error("[StaffCall WS] 에러 ❌:", e);
-    ws.onclose = (e) => console.log("[StaffCall WS] 연결 종료:", e.code, e.reason);
+    connect();
 
     return () => {
-      console.log("[StaffCall WS] cleanup → ws.close()");
-      ws.close();
+      cancelled = true;
+      clearAllTimers();
+      try {
+        ws?.close();
+      } catch {
+        /* noop */
+      }
     };
   }, [booth_id]);
 
