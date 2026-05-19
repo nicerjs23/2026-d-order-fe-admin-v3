@@ -32,6 +32,7 @@ import ReloadWhite from '../assets/icons/reloadWhite.svg';
 import BtnCheck from '../assets/icons/btnCheck.svg';
 import BtnPlus from '../assets/icons/btnPlus.svg';
 import BtnMinus from '../assets/icons/btnMinus.svg';
+import OrderFixedCheck from '../assets/icons/OrderFixedCheck.svg';
 
 import Backward from '../assets/icons/Backward.svg';
 
@@ -109,6 +110,7 @@ export const IMAGE_CONSTANTS = {
   BELL: Bell,
   BACKWARD_BLACK: BackWard_Black,
   Delete: Delete,
+  OrderFixedCheck: OrderFixedCheck,
   BTNCHECK: BtnCheck,
   BTNPLUS: BtnPlus,
   BTNMINUS: BtnMinus,

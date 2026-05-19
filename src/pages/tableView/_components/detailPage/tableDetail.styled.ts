@@ -168,7 +168,7 @@ export const ButtonWrapper = styled.div`
 `;
 
 
-export const CancleButton = styled.button`
+export const CancleButton = styled.button<{ $isCanceled?: boolean }>`
     min-width: 5.78rem;
     width: fit-content;
     height: 1.7rem;
@@ -177,13 +177,20 @@ export const CancleButton = styled.button`
     justify-content: center;
     align-items: center;
     gap: 0.28rem;
-    background-color: ${({theme}) => theme.colors.Orange00};
-    color: ${({theme}) => theme.colors.Orange01};
+    background-color: ${({theme, $isCanceled}) =>
+        $isCanceled ? theme.colors.Orange01 : theme.colors.Orange00};
+    color: ${({theme, $isCanceled}) =>
+        $isCanceled ? theme.colors.White : theme.colors.Orange01};
     ${({ theme }) => css(theme.fonts.SemiBold14)};
+    cursor: ${({ $isCanceled }) => ($isCanceled ? 'default' : 'pointer')};
 
     img{
         width: 1rem;
         height: 1rem;
+    }
+
+    &:disabled {
+        opacity: 1;
     }
 `;
 
