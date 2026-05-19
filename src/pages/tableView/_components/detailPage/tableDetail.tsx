@@ -186,7 +186,10 @@ const TableDetail: React.FC<Props> = ({ data, onBack }) => {
                   <p className="orderTime">{formatOrderTime(group.createdAt)}</p>
                 </S.OrderGroupHeader>
 
-                {group.items.map((order, idx) => (
+                {group.items.map((order, idx) => {
+                  const isCanceledOrder = Number(order.quantity) === 0;
+
+                  return (
                   <div key={order.id ?? `no-id-${idx}`}>
                     <S.ItemWrapper>
                       <S.ContentContainer>
@@ -210,7 +213,11 @@ const TableDetail: React.FC<Props> = ({ data, onBack }) => {
                       </S.ContentContainer>
                       <S.ButtonWrapper>
                         <S.CancleButton
+                          $isCanceled={isCanceledOrder}
+                          disabled={isCanceledOrder}
                           onClick={() => {
+                            if (isCanceledOrder) return;
+
                             if (!order.id) {
                               alert("주문 항목 ID가 없습니다. (백엔드 명세 확인 필요)");
                               return;
@@ -222,14 +229,22 @@ const TableDetail: React.FC<Props> = ({ data, onBack }) => {
                             });
                           }}
                         >
-                          <img src={IMAGE_CONSTANTS.Delete} alt="삭제" />
-                          주문 취소
+                          <img
+                            src={
+                              isCanceledOrder
+                                ? IMAGE_CONSTANTS.OrderFixedCheck
+                                : IMAGE_CONSTANTS.Delete
+                            }
+                            alt={isCanceledOrder ? "주문 취소 완료" : "삭제"}
+                          />
+                          {isCanceledOrder ? "주문 취소 완료" : "주문 취소"}
                         </S.CancleButton>
                       </S.ButtonWrapper>
                     </S.ItemWrapper>
                     <S.DivideLine />
                   </div>
-                ))}
+                  );
+                })}
               </S.OrderGroup>
             ))
           )}
