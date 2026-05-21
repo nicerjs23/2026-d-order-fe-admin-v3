@@ -100,9 +100,9 @@ export async function downloadManagerQRGrid(boothName: string): Promise<void> {
   body { font-family: sans-serif; background: #fff; }
   .grid {
     display: grid;
-    grid-template-columns: repeat(${COLS}, 46.8mm);
+    grid-template-columns: repeat(${COLS}, 51mm);
     grid-template-rows: repeat(${ROWS}, 60.8mm);
-    column-gap: 11.75mm;
+    column-gap: 6.5mm;
     row-gap: 5.8mm;
     margin: auto;
   }
@@ -130,12 +130,16 @@ export async function downloadManagerQRGrid(boothName: string): Promise<void> {
     flex-shrink: 0;
   }
   .badge {
+    max-width: 100%;
     background: #fff !important;
     color: #000 !important;
     font-weight: 700;
-    font-size: 10px;
-    padding: 2px 10px;
+    font-size: 9px;
+    padding: 2px 6px;
     border-radius: 999px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .tagline {
     color: #fff !important;
@@ -151,7 +155,8 @@ export async function downloadManagerQRGrid(boothName: string): Promise<void> {
     justify-content: center;
     background: #fff !important;
     border-radius: 5.3mm;
-    padding: 1.8mm;
+    padding: 1mm;
+    overflow: hidden;
   }
   .qr-wrap img { width: 100%; height: 100%; object-fit: contain; display: block;}
 </style>
