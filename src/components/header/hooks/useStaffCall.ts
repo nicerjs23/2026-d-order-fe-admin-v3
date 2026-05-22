@@ -36,13 +36,21 @@ const mapCallType = (callType: string): NotificationType => {
   return "직원 호출";
 };
 
+// 서버가 타임존 표기 없는 UTC 시각을 주면 JS가 로컬(KST)로 오해석해 9시간 어긋난다.
+// 오프셋(Z/+09:00 등)이 없으면 UTC로 간주하고, 있으면 그대로 파싱.
+const parseServerDate = (s: string): Date => {
+  const v = s.trim().replace(" ", "T");
+  const hasTz = /([zZ]|[+-]\d{2}:?\d{2})$/.test(v);
+  return new Date(hasTz ? v : `${v}Z`);
+};
+
 const mapToNotification = (item: StaffCallWsItem): Notification => {
   const s = (item.status ?? "").toUpperCase();
   return {
     id: item.staff_call_id,
     tableNumber: `T ${item.table_num ?? item.table_id ?? "?"}`,
     type: mapCallType(item.call_type),
-    createdAt: item.created_at ? new Date(item.created_at) : new Date(),
+    createdAt: item.created_at ? parseServerDate(item.created_at) : new Date(),
     isProcessed: s === "ACCEPTED" || s === "COMPLETED",
   };
 };
