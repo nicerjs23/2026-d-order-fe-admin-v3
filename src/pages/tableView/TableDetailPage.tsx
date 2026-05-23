@@ -1,5 +1,5 @@
 // tableView/TableDetailPage.tsx
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as S from "./TableDetailPage.styled";
 import TableDetail from "./_components/detailPage/tableDetail";
 import { useParams, useNavigate } from "react-router-dom";
@@ -38,8 +38,20 @@ const TableDetailPage = () => {
   const { tableNum } = useParams();
   const navigate = useNavigate();
   const [toastMsg, setToastMsg] = useState<string>("");
+  const suppressNextOrderUpdateToastRef = useRef(false);
+  const suppressNextOrderUpdateToastTimerRef = useRef<number | null>(null);
 
   const parsedNum = Number(tableNum);
+
+  const clearOrderUpdateToastSuppression = () => {
+    suppressNextOrderUpdateToastRef.current = false;
+    if (suppressNextOrderUpdateToastTimerRef.current) {
+      window.clearTimeout(suppressNextOrderUpdateToastTimerRef.current);
+      suppressNextOrderUpdateToastTimerRef.current = null;
+    }
+  };
+
+  useEffect(() => clearOrderUpdateToastSuppression, []);
   
   // 🌟 refetch를 가져옵니다.
   const {
@@ -58,6 +70,10 @@ const TableDetailPage = () => {
       // 새로운 주문이 들어오면 내역을 갱신하고 알림을 띄웁니다.
       console.log("[TableDetail WS] order_update received → refetch");
       refetch();
+      if (suppressNextOrderUpdateToastRef.current) {
+        clearOrderUpdateToastSuppression();
+        return;
+      }
       setToastMsg("🔔 새로운 주문이 추가되었습니다!");
     },
     onResetTable: (data) => {
@@ -89,6 +105,17 @@ const TableDetailPage = () => {
         key={tableDetail.table_num}
         data={tableDetail}
         onBack={() => navigate("/table-view")}
+        onOrderItemCancelSuccess={() => {
+          if (suppressNextOrderUpdateToastTimerRef.current) {
+            window.clearTimeout(suppressNextOrderUpdateToastTimerRef.current);
+          }
+          suppressNextOrderUpdateToastRef.current = true;
+          suppressNextOrderUpdateToastTimerRef.current = window.setTimeout(
+            clearOrderUpdateToastSuppression,
+            3000
+          );
+          setToastMsg("");
+        }}
       />
       
       {/* 상세 페이지 전용 토스트 (주문 업데이트 등) */}

@@ -22,6 +22,7 @@ import { useNavigate } from "react-router-dom";
 interface Props {
   data: TableDetailData;
   onBack?: () => void;
+  onOrderItemCancelSuccess?: () => void;
 }
 
 const API_ORIGIN = (() => {
@@ -58,7 +59,7 @@ const formatOrderTime = (createdAt?: string): string => {
     hour12: false,
   });
 };
-const TableDetail: React.FC<Props> = ({ data, onBack }) => {
+const TableDetail: React.FC<Props> = ({ data, onBack, onOrderItemCancelSuccess }) => {
   const navigate = useNavigate();
   const [toastMsg, setToastMsg] = useState<string>("");
   // 선택한 메뉴의 정보 (취소를 위해 id 필수)
@@ -263,13 +264,14 @@ const TableDetail: React.FC<Props> = ({ data, onBack }) => {
             try {
               // API 요청
               await cancelOrderItem(confirmInfo.id, confirmInfo.cancelQuantity);
+              onOrderItemCancelSuccess?.();
               
               // 모달 닫기 및 데이터 갱신
               setConfirmInfo(null);
               await refetchTableDetail(); 
 
               // ✅ 주문 취소 토스트 띄우기
-              setToastMsg(`주문 ${confirmInfo.cancelQuantity}건이 취소되었어요!`);
+              setToastMsg("주문이 취소되었습니다!");
             } catch (e: any) {
               setConfirmInfo(null);
               setErrorModalMsg(e.message || "주문 취소 중 오류가 발생했습니다.");
