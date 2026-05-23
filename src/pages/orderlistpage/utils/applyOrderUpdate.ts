@@ -36,14 +36,15 @@ export function applyOrderUpdate(
   const patchMap = collectPatches(data);
   if (patchMap.size === 0) return prev;
 
-  const targetOrderId = data.order_id;
+  const targetOrderId =
+    data.order_id != null ? Number(data.order_id) : undefined;
 
   return prev
     .map((table) => {
       if (
         table.orderId != null &&
         targetOrderId != null &&
-        table.orderId !== targetOrderId
+        Number(table.orderId) !== targetOrderId
       ) {
         return table;
       }

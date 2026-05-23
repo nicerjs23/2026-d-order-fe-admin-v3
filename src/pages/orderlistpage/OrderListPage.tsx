@@ -6,13 +6,11 @@ import OrderList from './compoenents/OrderList/OrderList';
 import AmountBox from './compoenents/amountBox/AmountBox';
 import type { AmountItem } from './compoenents/amountBox/AmountBox';
 import type { OrderBoxData } from './compoenents/orderbox/OrderBox';
-import type { OrderStatus } from './compoenents/orderboxitem/OrderBoxItem.styled';
 import type { EditableStatus } from './compoenents/orderboxitem/OrderBoxItem';
 import { useOrderManagementWebSocket } from './hooks/useOrderManagementWebSocket';
 import { updateOrderItemStatus } from './apis/updateOrderItemStatus';
 import type { OrderItemTargetStatus } from './utils/mapEditableStatusToApiStatus';
 import { mapEditableStatusToApiStatus } from './utils/mapEditableStatusToApiStatus';
-import { mapStatus } from './utils/mapSnapshotToOrderBoxData';
 import { getNextStatus } from './utils/getNextStatus';
 
 export default function OrderListPage() {
@@ -32,22 +30,11 @@ export default function OrderListPage() {
   const statusSubmittingRef = useRef(false);
 
   /**
-   * 공통 상태 변경 로직: API 호출 → 낙관적 UI 업데이트
-   * handleOrderItemClick과 handleStatusSelect에서 공유
+   * 상태 변경: PATCH만 호출하고 UI는 WS(ADMIN_ORDER_UPDATE / ADMIN_ORDER_COMPLETED)에 맡김.
+   * (PATCH 직후 tableIndex 기반 로컬 갱신·삭제는 목록이 밀릴 때 다른 통까지 지우는 원인)
    */
   const executeStatusChange = useCallback(
-    async (
-      tableIndex: number,
-      itemIndex: number,
-      targetStatus: OrderItemTargetStatus,
-    ) => {
-      const orderItemId = orders[tableIndex]?.items[itemIndex]?.id;
-
-      if (orderItemId == null) {
-        alert('order_item_id가 없어 상태를 변경할 수 없습니다.');
-        return;
-      }
-
+    async (orderItemId: number, targetStatus: OrderItemTargetStatus) => {
       if (statusSubmittingRef.current) return;
       statusSubmittingRef.current = true;
 
@@ -62,37 +49,7 @@ export default function OrderListPage() {
           target_status: targetStatus,
         });
 
-        const d = res.data;
-        const nextUiStatus: OrderStatus = d?.status
-          ? mapStatus(d.status)
-          : (mapStatus(targetStatus) as OrderStatus);
-
-        console.log('[OrderList] 상태 변경 응답', res);
-
-        if (d?.all_items_served) {
-          setOrders((prev) => {
-            const oid = prev[tableIndex]?.orderId;
-            if (oid != null) {
-              return prev.filter((box) => box.orderId !== oid);
-            }
-            return prev.filter((_, i) => i !== tableIndex);
-          });
-        } else {
-          setOrders((prev) =>
-            prev.map((tableRow, ti) =>
-              ti !== tableIndex
-                ? tableRow
-                : {
-                    ...tableRow,
-                    items: tableRow.items.map((rowItem, ii) =>
-                      ii !== itemIndex
-                        ? rowItem
-                        : { ...rowItem, status: nextUiStatus },
-                    ),
-                  },
-            ),
-          );
-        }
+        console.log('[OrderList] 상태 변경 요청 완료 (UI는 WS 반영)', res);
       } catch (err) {
         let message = '상태 변경에 실패했습니다.';
         if (isAxiosError(err)) {
@@ -107,7 +64,7 @@ export default function OrderListPage() {
         statusSubmittingRef.current = false;
       }
     },
-    [orders],
+    [],
   );
 
   /** 단일 클릭: 상태 자동 전진 (조리중→조리완료, 조리완료→서빙완료) */
@@ -118,8 +75,12 @@ export default function OrderListPage() {
 
       const nextApiStatus = getNextStatus(item.status);
       if (nextApiStatus == null) return; // 서빙중/서빙완료 등 전진 불가
+      if (item.id == null) {
+        alert('order_item_id가 없어 상태를 변경할 수 없습니다.');
+        return;
+      }
 
-      await executeStatusChange(tableIndex, itemIndex, nextApiStatus);
+      await executeStatusChange(item.id, nextApiStatus);
     },
     [orders, executeStatusChange],
   );
@@ -138,12 +99,19 @@ export default function OrderListPage() {
       if (openTarget == null) return;
 
       const { tableIndex, itemIndex } = openTarget;
+      const orderItemId = orders[tableIndex]?.items[itemIndex]?.id;
+      if (orderItemId == null) {
+        alert('order_item_id가 없어 상태를 변경할 수 없습니다.');
+        setOpenTarget(null);
+        return;
+      }
+
       const targetStatus = mapEditableStatusToApiStatus(newStatus);
 
       setOpenTarget(null);
-      await executeStatusChange(tableIndex, itemIndex, targetStatus);
+      await executeStatusChange(orderItemId, targetStatus);
     },
-    [openTarget, executeStatusChange],
+    [openTarget, orders, executeStatusChange],
   );
 
   const handleModalClose = useCallback(() => {
