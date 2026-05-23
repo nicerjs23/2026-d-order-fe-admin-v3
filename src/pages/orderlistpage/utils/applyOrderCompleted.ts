@@ -9,9 +9,9 @@ export function applyOrderCompleted(
   prev: OrderBoxData[],
   data: OrderCompletedPayload
 ): OrderBoxData[] {
-  const completedId = data.order_id;
+  const completedId = Number(data.order_id);
   return prev.filter((box) => {
-    if (box.orderId != null) return box.orderId !== completedId;
+    if (box.orderId != null) return Number(box.orderId) !== completedId;
     // 레거시(평면 스냅샷 등 orderId 없음): 테이블 단위로만 구분
     return Number(box.tableNumber) !== Number(data.table_num);
   });
