@@ -34,6 +34,9 @@ export const instatnceWithImg: AxiosInstance = axios.create({
 const isCsrfTokenEndpoint = (url?: string) =>
   url?.includes('/api/v3/django/auth/csrf-token/');
 
+const isDjangoAuthEndpoint = (url?: string) =>
+  url?.includes('/api/v3/django/auth/');
+
 /**
  * 로그인·회원가입 등 아직 로그인되지 않은 상태의 auth 요청.
  * 이 경로에서 오는 401은 "비밀번호 틀림" 등이므로 refresh/location.href 로그인 이동을 하면 안 됨.
@@ -51,10 +54,20 @@ const isUnsafeMethod = (method?: string) => {
   return !['GET', 'HEAD', 'OPTIONS', 'TRACE'].includes(m);
 };
 
-const fetchCsrfToken = async (): Promise<string | null> => {
-  const res = await instance.get('/api/v3/django/auth/csrf-token/');
-  const token = res.data?.csrfToken;
-  return typeof token === 'string' ? token : null;
+let inflightCsrfFetch: Promise<string | null> | null = null;
+
+const fetchCsrfToken = (): Promise<string | null> => {
+  if (inflightCsrfFetch) return inflightCsrfFetch;
+  inflightCsrfFetch = instance
+    .get('/api/v3/django/auth/csrf-token/')
+    .then((res) => {
+      const token = res.data?.csrfToken;
+      return typeof token === 'string' ? token : null;
+    })
+    .finally(() => {
+      inflightCsrfFetch = null;
+    });
+  return inflightCsrfFetch;
 };
 
 // ============================================
@@ -64,7 +77,7 @@ const v3RequestInterceptor = async (config: InternalAxiosRequestConfig) => {
   const isV3Request = config.url?.includes('/api/v3/');
 
   // V3 unsafe 메서드일 때 CSRF 토큰 주입
-  if (isV3Request && isUnsafeMethod(config.method) && !isCsrfTokenEndpoint(config.url)) {
+  if (isV3Request && isUnsafeMethod(config.method) && !isCsrfTokenEndpoint(config.url) && !isDjangoAuthEndpoint(config.url)) {
     let csrfToken = document.cookie
       .split('; ')
       .find((row) => row.startsWith('csrftoken='))
