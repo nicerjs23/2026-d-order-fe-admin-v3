@@ -18,6 +18,7 @@ import CouponPage from '@pages/coupon/CouponPage';
 import { ROUTE_PATHS } from '@constants/routeConstants';
 import OrderListPage from '@pages/orderlistpage/OrderListPage';
 import TableDetailPage from '@pages/tableView/TableDetailPage';
+import ErrorPage from '@pages/error/ErrorPage';
 
 // GA 추적을 위한 래퍼 컴포넌트
 const LayoutWithAnalytics = ({ children }: { children: React.ReactNode }) => {
@@ -32,6 +33,7 @@ const router = createBrowserRouter([
         <DefaultLayout />
       </LayoutWithAnalytics>
     ),
+    errorElement: <ErrorPage />,
     children: [
       { path: ROUTE_PATHS.HOME, element: <OrderListPage /> },
       { path: ROUTE_PATHS.TABLE_VIEW, element: <TableViewPage /> },
@@ -47,11 +49,16 @@ const router = createBrowserRouter([
         <UserLayout />
       </LayoutWithAnalytics>
     ),
+    errorElement: <ErrorPage />,
     children: [
       { path: ROUTE_PATHS.INIT, element: <InitPage /> },
       { path: ROUTE_PATHS.LOGIN, element: <LoginPage /> },
       { path: ROUTE_PATHS.SIGNUP, element: <SignupPage /> },
     ],
+  },
+  {
+    path: "*",
+    element: <ErrorPage />,
   },
 ]);
 
