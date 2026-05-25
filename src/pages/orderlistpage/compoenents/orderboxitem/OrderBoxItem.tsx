@@ -32,7 +32,7 @@ export type OrderBoxItemProps = {
   menuName: string;
   quantity: number;
   status: OrderStatus;
-  /** 단일 클릭 시 호출 (상태 전진). 서빙중/서빙완료/서빙수락일 땐 동작하지 않음 */
+  /** 상태 배지 클릭 시 호출 (상태 전진). 서빙중/서빙완료/서빙수락일 땐 동작하지 않음 */
   onClick?: () => void;
   /** 500ms 길게 누르면 호출 (되돌리기 모달). 서빙중일 땐 동작하지 않음 */
   onLongPress?: () => void;
@@ -85,9 +85,13 @@ export default function OrderBoxItem({
     delay: 500,
     disabled:
       status === '서빙중' || !onLongPress || (!!isAnyModalOpen && !isModalOpen),
-    onClick,
-    clickDisabled: isClickDisabled,
+    clickDisabled: true,
   });
+
+  const handleStatusBadgeClick = () => {
+    if (isClickDisabled) return;
+    onClick?.();
+  };
 
   const statusButtonRef = useRef<HTMLDivElement>(null);
   const { anchorRect, placement } = useStatusModalAnchor(
@@ -96,9 +100,9 @@ export default function OrderBoxItem({
   );
 
   return (
-    <S.OrderBoxItemWrapper {...longPress} $isModalOpen={isModalOpen}>
+    <S.OrderBoxItemWrapper $isModalOpen={isModalOpen}>
       <S.ModalWrapper $isModalOpen={isModalOpen} />
-      <S.ItemInfoHalf>
+      <S.ItemInfoHalf {...longPress}>
         <S.ItemInfo>
           <S.ItemImage>
             {imageUrl ? (
@@ -119,7 +123,20 @@ export default function OrderBoxItem({
       </S.ItemInfoHalf>
       <S.ItemInfoHalf2>
         <S.Quantity $status={status}>{quantity}</S.Quantity>
-        <S.StatusBadgeWrap ref={statusButtonRef}>
+        <S.StatusBadgeWrap
+          ref={statusButtonRef}
+          $interactive={!isClickDisabled}
+          role={!isClickDisabled ? 'button' : undefined}
+          tabIndex={!isClickDisabled ? 0 : undefined}
+          onClick={handleStatusBadgeClick}
+          onKeyDown={(e) => {
+            if (isClickDisabled) return;
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleStatusBadgeClick();
+            }
+          }}
+        >
           <S.StatusBadge $status={status}>
             <StatusIcon status={status} />
             {status}

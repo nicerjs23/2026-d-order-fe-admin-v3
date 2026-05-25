@@ -151,9 +151,14 @@ export const Quantity = styled.span<{ $status: OrderStatus }>`
   color: ${({ $status }) => menuQuantityStyles[$status].color};
 `;
 
-/** 모달 위치 기준용. 상태 버튼(조리중 등) 감싸는 래퍼 */
-export const StatusBadgeWrap = styled.div`
+/** 모달 위치 기준·상태 전진 클릭 영역 (배지 전체) */
+export const StatusBadgeWrap = styled.div<{ $interactive?: boolean }>`
   display: inline-flex;
+  ${({ $interactive }) =>
+    $interactive &&
+    css`
+      cursor: pointer;
+    `}
 `;
 
 export const StatusBadge = styled.span<{ $status: OrderStatus }>`
