@@ -32,9 +32,9 @@ export type OrderBoxItemProps = {
   menuName: string;
   quantity: number;
   status: OrderStatus;
-  /** 상태 배지 클릭 시 호출 (상태 전진). 서빙중/서빙완료/서빙수락일 땐 동작하지 않음 */
+  /** 상태 배지 짧게 누를 때 (상태 전진). 서빙중/서빙완료/서빙수락일 땐 동작하지 않음 */
   onClick?: () => void;
-  /** 500ms 길게 누르면 호출 (되돌리기 모달). 서빙중일 땐 동작하지 않음 */
+  /** 상태 배지 500ms 길게 누를 때 (되돌리기 모달). 서빙중일 땐 동작하지 않음 */
   onLongPress?: () => void;
   /** 이 항목의 상태 변경 모달이 열려 있는지 */
   isModalOpen?: boolean;
@@ -73,7 +73,6 @@ export default function OrderBoxItem({
   onStatusSelect,
   onModalClose,
 }: OrderBoxItemProps) {
-  /* 클릭 비활성: 서빙중/서빙완료/서빙수락이거나 모달이 열려 있을 때 */
   const isClickDisabled =
     status === '서빙중' ||
     status === '서빙완료' ||
@@ -81,17 +80,21 @@ export default function OrderBoxItem({
     !onClick ||
     !!isAnyModalOpen;
 
-  const longPress = useLongPress(onLongPress ?? (() => {}), {
-    delay: 500,
-    disabled:
-      status === '서빙중' || !onLongPress || (!!isAnyModalOpen && !isModalOpen),
-    clickDisabled: true,
-  });
+  const isLongPressDisabled =
+    status === '서빙중' || !onLongPress || (!!isAnyModalOpen && !isModalOpen);
 
-  const handleStatusBadgeClick = () => {
-    if (isClickDisabled) return;
-    onClick?.();
-  };
+  /** 짧은 탭·롱프레스 모두 배지에서만 (useLongPress가 구분) */
+  const isBadgeInteractive = !isClickDisabled || !isLongPressDisabled;
+
+  const badgePress = useLongPress(onLongPress ?? (() => {}), {
+    delay: 500,
+    disabled: isLongPressDisabled,
+    onClick: () => {
+      if (isClickDisabled) return;
+      onClick?.();
+    },
+    clickDisabled: isClickDisabled,
+  });
 
   const statusButtonRef = useRef<HTMLDivElement>(null);
   const { anchorRect, placement } = useStatusModalAnchor(
@@ -102,7 +105,7 @@ export default function OrderBoxItem({
   return (
     <S.OrderBoxItemWrapper $isModalOpen={isModalOpen}>
       <S.ModalWrapper $isModalOpen={isModalOpen} />
-      <S.ItemInfoHalf {...longPress}>
+      <S.ItemInfoHalf>
         <S.ItemInfo>
           <S.ItemImage>
             {imageUrl ? (
@@ -125,15 +128,14 @@ export default function OrderBoxItem({
         <S.Quantity $status={status}>{quantity}</S.Quantity>
         <S.StatusBadgeWrap
           ref={statusButtonRef}
-          $interactive={!isClickDisabled}
-          role={!isClickDisabled ? 'button' : undefined}
-          tabIndex={!isClickDisabled ? 0 : undefined}
-          onClick={handleStatusBadgeClick}
+          {...badgePress}
+          $interactive={isBadgeInteractive}
+          role={isBadgeInteractive ? 'button' : undefined}
+          tabIndex={isBadgeInteractive ? 0 : undefined}
           onKeyDown={(e) => {
-            if (isClickDisabled) return;
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
-              handleStatusBadgeClick();
+              if (!isClickDisabled) onClick?.();
             }
           }}
         >

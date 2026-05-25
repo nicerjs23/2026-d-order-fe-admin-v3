@@ -133,7 +133,7 @@ const menuQuantityStyles: Record<
   서빙중: { font: 'Medium16', color: theme.colors.Gray03 },
   서빙완료: { font: 'Medium16', color: theme.colors.Focused },
   서빙수락: { font: 'SemiBold16', color: theme.colors.Gray03 },
-  조리완료: { font: 'SemiBold16', color: theme.colors.Gray03 },
+  조리완료: { font: 'SemiBold16', color: theme.colors.Black01 },
 };
 
 export const MenuName = styled.span<{ $status: OrderStatus }>`
