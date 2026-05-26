@@ -28,7 +28,7 @@ export const useOrdersData = () => {
       setAllOrders(convertApiToUi(response.data.orders));
       setLastUpdated(new Date());
     } catch (e) {
-      console.error(e);
+      /* console.error(e); */
     } finally {
       // 로딩이 끝나면 false로 변경
       setIsLoading(false);

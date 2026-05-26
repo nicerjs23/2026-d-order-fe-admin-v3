@@ -26,7 +26,7 @@ export const CouponDetail = ({ couponId, setSelectedCouponId }: Props) => {
     try {
       await CouponService.getDownCouponExcel(couponId);
     } catch (err) {
-      console.error('쿠폰 엑셀 다운 실패:', err);
+      /* console.error('쿠폰 엑셀 다운 실패:', err); */
     }
   };
   const handleDelete = async () => {
@@ -39,7 +39,7 @@ export const CouponDetail = ({ couponId, setSelectedCouponId }: Props) => {
       if (isAxiosError(err) && err.response?.status === 409) {
         setToastMsg('이미 사용된 쿠폰은 삭제가 불가능합니다.');
       } else {
-        console.error('쿠폰 삭제 실패:', err);
+        /* console.error('쿠폰 삭제 실패:', err); */
       }
     }
   };

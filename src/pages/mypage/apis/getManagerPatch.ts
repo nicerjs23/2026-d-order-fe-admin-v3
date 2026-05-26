@@ -42,7 +42,7 @@ function normalizeAndThrow(error: unknown): never {
       message = "권한이 없거나 CSRF 토큰 처리에 실패했습니다. 다시 시도해주세요.";
     }
 
-    console.error("[PATCH manager][ERROR]", { status, body });
+    /* console.error("[PATCH manager][ERROR]", { status, body }); */
     throw { message, code: status, data: null };
   }
   throw { message: "부스 정보 수정 중 오류가 발생했습니다.", code: 500, data: null };

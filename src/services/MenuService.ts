@@ -94,7 +94,7 @@ const MenuService = {
       const response = await instance.get<MenuListResponseV3>(
         '/api/v3/django/booth/menu-list/',
       );
-      console.log('메뉴 리스트 응답:', response.data);
+      /* console.log('메뉴 리스트 응답:', response.data); */
       return mapV3MenuListToBoothMenuData(response.data);
     } catch (error) {
       throw error;

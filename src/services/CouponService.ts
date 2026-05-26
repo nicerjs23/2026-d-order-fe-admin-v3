@@ -109,7 +109,7 @@ export const CouponService = {
       const response = await instance.get<getCouponDetailResponse>(
         `/api/v3/django/coupon/${coupon_id}/detail/`,
       );
-      console.log('getCouponDetail response:', response.data);
+      /* console.log('getCouponDetail response:', response.data); */
       return response.data;
     } catch (error: any) {
       throw error;

@@ -217,7 +217,7 @@ const MenuModal = ({ handleCloseModal, boothMenuData }: MenuModalProps) => {
       }
       handleCloseModal();
     } catch (e) {
-      console.log(e);
+      /* console.log(e); */
       setIsSubmitting(false);
     }
   };
