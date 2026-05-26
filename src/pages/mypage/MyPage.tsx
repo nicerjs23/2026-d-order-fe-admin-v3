@@ -270,7 +270,7 @@ const MyPage = () => {
       />
 
       {showLogoutModal && <Modal title="정말 로그아웃 하시겠습니까?" onCancel={() => setShowLogoutModal(false)} onConfirm={handleLogout} confirmText="로그아웃" />}
-      {showResetModal && <Modal title="정말 데이터를 포맷하시겠습니까?" onCancel={() => setShowResetModal(false)} onConfirm={handleReset} confirmText="포맷하기" />}
+      {showResetModal && <Modal title="정말 데이터를 포맷하시겠습니까?" subtitle="*총매출과 통계정보가 사라집니다." onCancel={() => setShowResetModal(false)} onConfirm={handleReset} confirmText="포맷하기" />}
     </S.Wrapper>
   );
 };

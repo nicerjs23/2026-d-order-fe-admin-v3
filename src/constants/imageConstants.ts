@@ -21,7 +21,6 @@ import Nav_my_active from '../assets/icons/navMyActiveV3.svg';
 import Nav_coupon from '../assets/icons/navCouponV3.svg';
 import Nav_coupon_active from '../assets/icons/navCouponActiveV3.svg';
 
-
 import BroomIcon from '../assets/icons/broom-icon.svg';
 import MergeIcon from '../assets/icons/merge-icon.svg';
 // import QR_icon from "../assets/icons/QR_icon.svg";
@@ -42,8 +41,8 @@ import MenuEdit from '../assets/icons/grayEdit.svg';
 
 import close from '@assets/icons/close.svg';
 import close2 from '@assets/icons/close2.svg';
-import COUPON_RATE from '../assets/images/couponRate.png';
-import COUPON_PRICE from '../assets/images/couponPrice.png';
+import COUPON_RATE from '../assets/icons/cou1.png';
+import COUPON_PRICE from '../assets/icons/cou2.png';
 
 import Down from '@assets/icons/down.svg';
 
