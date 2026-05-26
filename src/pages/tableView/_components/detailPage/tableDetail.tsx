@@ -312,7 +312,7 @@ const TableDetail: React.FC<Props> = ({ data, onBack, onOrderItemCancelSuccess }
                 state: { resetToastMessage: `${tableDetailData.table_num}번 테이블이 초기화되었습니다.` } 
               });
             } catch (e: any) {
-              console.error("테이블 초기화 실패:", e);
+              /* console.error("테이블 초기화 실패:", e); */
               alert(e.message || "테이블 초기화에 실패했습니다.");
               setShowResetModal(false);
             }

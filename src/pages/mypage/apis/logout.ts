@@ -21,7 +21,7 @@
             ? "자격 인증 데이터가 제공되지 않았습니다."
             : "로그아웃에 실패했습니다.");
 
-        console.error("[LOGOUT][ERROR]", { status, message });
+        /* console.error("[LOGOUT][ERROR]", { status, message }); */
         throw { message, data: null };
     }
     

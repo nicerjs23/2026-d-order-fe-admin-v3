@@ -145,7 +145,7 @@ const EditSetMenuModal = ({
       await MenuService.editSetMenu(setMenu.set_menu_id, payload);
       onSuccess();
     } catch (err) {
-      console.log(err);
+      /* console.log(err); */
     } finally {
       handleCloseModal();
     }

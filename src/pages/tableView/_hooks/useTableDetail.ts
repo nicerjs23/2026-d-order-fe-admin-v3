@@ -22,7 +22,7 @@ export const useTableDetail = (tableNum: number) => {
       if (!res || !res.data) {
         throw new Error("테이블 상세 데이터가 비어 있습니다.");
       }
-      console.log("[TableDetail] fetched normalized data:", res.data);
+      /* console.log("[TableDetail] fetched normalized data:", res.data); */
       setDetail(res.data);
       setStatus("success");
     } catch (e: any) {
@@ -45,7 +45,7 @@ export const useTableDetail = (tableNum: number) => {
         await fetchDetail(); 
         return res;
       } catch (error) {
-        console.error("주문 취소 실패:", error);
+        /* console.error("주문 취소 실패:", error); */
         throw error; // UI(모달 등)에서 에러 처리를 할 수 있도록 던짐
       }
     },

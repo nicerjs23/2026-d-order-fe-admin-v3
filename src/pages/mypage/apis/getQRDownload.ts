@@ -32,11 +32,11 @@ function normalizeAndThrow(error: unknown): never {
           ? 'QR 코드를 찾을 수 없습니다.'
           : 'QR 코드 조회 중 오류가 발생했습니다.');
 
-    console.error(`[QR][${status}]`, msg);
+    /* console.error(`[QR][${status}]`, msg); */
     throw new Error(msg);
   }
 
-  console.error('[QR] 알 수 없는 오류', error);
+  /* console.error('[QR] 알 수 없는 오류', error); */
   throw new Error('QR 코드 처리 중 오류가 발생했습니다.');
 }
 
@@ -199,9 +199,9 @@ export async function downloadManagerQR(
     a.remove();
     window.URL.revokeObjectURL(objectUrl);
 
-    console.info('[QR] 다운로드 완료:', filename);
+    /* console.info('[QR] 다운로드 완료:', filename); */
   } catch (e: any) {
-    console.error('[QR] 다운로드 실패', e);
+    /* console.error('[QR] 다운로드 실패', e); */
     // URL을 직접 여는 폴백(Fallback) 처리 - CORS 이슈로 fetch가 막힐 경우 새 창에서 열기
     if (
       e.message === '이미지를 가져오는 데 실패했습니다.' ||
@@ -211,7 +211,9 @@ export async function downloadManagerQR(
         .then((url) => {
           window.open(url, '_blank');
         })
-        .catch(console.error);
+        .catch((_error) => {
+          /* console.error(error); */
+        });
     } else {
       throw e;
     }

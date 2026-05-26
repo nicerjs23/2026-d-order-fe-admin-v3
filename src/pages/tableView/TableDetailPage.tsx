@@ -64,11 +64,11 @@ const TableDetailPage = () => {
   // 🌟 특정 테이블 번호 구독 웹소켓 연결
   useTableDetailWS({
     tableNum: parsedNum,
-    onConnectionEstablished: (data) =>
-      console.log(`[WS 상세-${parsedNum}] 연결 완료`, data),
+    onConnectionEstablished: (_data) =>
+      { /* console.log(`[WS 상세-${parsedNum}] 연결 완료`, data) */ },
     onOrderUpdate: () => {
       // 새로운 주문이 들어오면 내역을 갱신하고 알림을 띄웁니다.
-      console.log("[TableDetail WS] order_update received → refetch");
+      /* console.log("[TableDetail WS] order_update received → refetch"); */
       refetch();
       if (suppressNextOrderUpdateToastRef.current) {
         clearOrderUpdateToastSuppression();
@@ -86,8 +86,8 @@ const TableDetailPage = () => {
         },
       });
     },
-    onError: (error) => {
-      console.error(`[WS 상세-${parsedNum}] 서버 에러 이벤트`, error);
+    onError: (_error) => {
+      /* console.error(`[WS 상세-${parsedNum}] 서버 에러 이벤트`, error); */
     },
   });
 

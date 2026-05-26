@@ -133,7 +133,7 @@ const EditMenuModal = ({ handleCloseModal, defaultValues }: EditModalProps) => {
           const correctedFile = await compressImage(image);
           formData.append('image', correctedFile);
         } catch (e) {
-          console.log(e);
+          /* console.log(e); */
         } finally {
           handleCloseModal();
         }
@@ -141,7 +141,7 @@ const EditMenuModal = ({ handleCloseModal, defaultValues }: EditModalProps) => {
       try {
         await MenuServiceWithImg.updateMenu(defaultValues.menu_id, formData);
       } catch (e) {
-        console.log(e);
+        /* console.log(e); */
       } finally {
         handleCloseModal();
       }
@@ -153,7 +153,7 @@ const EditMenuModal = ({ handleCloseModal, defaultValues }: EditModalProps) => {
         await MenuServiceWithImg.updateMenu(defaultValues.menu_id, formData);
         setButtonDisable(false);
       } catch (err) {
-        console.log(err);
+        /* console.log(err); */
       } finally {
         handleCloseModal();
       }
@@ -164,7 +164,7 @@ const EditMenuModal = ({ handleCloseModal, defaultValues }: EditModalProps) => {
         await MenuService.updateMenu(defaultValues.menu_id, formData);
         handleCloseModal();
       } catch (e) {
-        console.log(e);
+        /* console.log(e); */
       }
     }
   };

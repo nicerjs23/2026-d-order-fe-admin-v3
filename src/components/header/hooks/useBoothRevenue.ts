@@ -74,14 +74,14 @@ const useBoothRevenue = () => {
 
     ws.onopen = () => {
       setError(null);
-      console.info('[총매출 WS] 웹소켓 연결 성공:', wsUrl);
+      /* console.info('[총매출 WS] 웹소켓 연결 성공:', wsUrl); */
       retryCountRef.current = 0;
     };
 
     ws.onmessage = (event) => {
       try {
         const message = JSON.parse(event.data);
-        console.log(' [총매출 WS] 메시지 전체 수신:', message);
+        /* console.log(' [총매출 WS] 메시지 전체 수신:', message); */
         // V3 이벤트 타입: TOTAL_SALES_SNAPSHOT(연결 직후 스냅샷), TOTAL_SALES_UPDATE(이후 갱신)
         if (
           message?.type === 'TOTAL_SALES_SNAPSHOT' ||
@@ -89,15 +89,15 @@ const useBoothRevenue = () => {
         ) {
           // V3 payload 구조: { type, timestamp, data: { today_revenue } }
           const next = Number(message.data?.today_revenue) || 0;
-          console.log(`[총매출 WS] 매출 업데이트: ${next.toLocaleString()}원`);
+          /* console.log(`[총매출 WS] 매출 업데이트: ${next.toLocaleString()}원`); */
           setTotalRevenues(next);
         }
 
         if (message?.type === 'error') {
-          console.error('🔴 [SALES WS] 서버 에러:', message.message);
+          /* console.error('🔴 [SALES WS] 서버 에러:', message.message); */
         }
       } catch (e) {
-        console.error('🔴 [SALES WS] 메시지 파싱 오류:', e);
+        /* console.error('🔴 [SALES WS] 메시지 파싱 오류:', e); */
       }
     };
 

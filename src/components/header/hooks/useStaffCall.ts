@@ -68,7 +68,7 @@ export const useStaffCall = () => {
 
   useEffect(() => {
     if (!booth_id) {
-      console.warn("[staffcall ws] skip — booth_id not ready");
+      /* console.warn("[staffcall ws] skip — booth_id not ready"); */
       return;
     }
 
@@ -96,7 +96,7 @@ export const useStaffCall = () => {
       clearTimer(pongDeadlineId);
       pongDeadlineId = setTimeout(() => {
         if (cancelled) return;
-        console.warn("[staffcall ws] pong timeout → force close");
+        /* console.warn("[staffcall ws] pong timeout → force close"); */
         try {
           ws?.close();
         } catch {
@@ -113,7 +113,7 @@ export const useStaffCall = () => {
           ws.send(JSON.stringify({ type: "PING" }));
           armPongDeadline();
         } catch (err) {
-          console.error("[staffcall ws] ping send failed", err);
+          /* console.error("[staffcall ws] ping send failed", err); */
         }
       }, PING_INTERVAL_MS);
     };
@@ -128,16 +128,20 @@ export const useStaffCall = () => {
       );
       mapped.forEach((n) => knownIdsRef.current.add(n.id));
 
-      console.log(
-        `[staffcall ws] snapshot count=${mapped.length} newPending=${newPending.length}`,
-      );
+      /*
+       * console.log(
+       *         `[staffcall ws] snapshot count=${mapped.length} newPending=${newPending.length}`,
+       *       );
+       */
 
       if (newPending.length > 0) {
         BellPlayer.play();
         const first = newPending[0];
-        console.log(
-          `[staffcall ws] alert tableNumber=${first.tableNumber} type=${first.type}`,
-        );
+        /*
+         * console.log(
+         *           `[staffcall ws] alert tableNumber=${first.tableNumber} type=${first.type}`,
+         *         );
+         */
         setLiveNotice(`${first.tableNumber} ${first.type}`);
         setShowLiveNotice(true);
         setTimeout(() => setShowLiveNotice(false), 4000);
@@ -150,7 +154,7 @@ export const useStaffCall = () => {
     const connect = () => {
       if (cancelled) return;
       const url = getWsUrl(`/ws/server/staffcall`);
-      console.log(`[staffcall ws] connect url=${url}`);
+      /* console.log(`[staffcall ws] connect url=${url}`); */
 
       ws = new WebSocket(url);
 
@@ -159,11 +163,11 @@ export const useStaffCall = () => {
           ws?.close();
           return;
         }
-        console.log("[staffcall ws] open");
+        /* console.log("[staffcall ws] open"); */
         try {
           ws?.send(JSON.stringify({ type: "LIST", limit: LIST_LIMIT, offset: 0 }));
         } catch (err) {
-          console.error("[staffcall ws] LIST send failed", err);
+          /* console.error("[staffcall ws] LIST send failed", err); */
         }
         schedulePing();
       };
@@ -174,7 +178,7 @@ export const useStaffCall = () => {
         try {
           msg = JSON.parse(event.data);
         } catch (err) {
-          console.error("[staffcall ws] parse error", err);
+          /* console.error("[staffcall ws] parse error", err); */
           return;
         }
 
@@ -192,22 +196,24 @@ export const useStaffCall = () => {
       };
 
       ws.onerror = () => {
-        console.error("[staffcall ws] error");
+        /* console.error("[staffcall ws] error"); */
       };
 
-      ws.onclose = (e) => {
+      ws.onclose = (_e) => {
         clearTimer(pingTimerId);
         pingTimerId = null;
         clearTimer(pongDeadlineId);
         pongDeadlineId = null;
 
         const willReconnect = !cancelled;
-        console.log(
-          `[staffcall ws] close code=${e.code} reason=${e.reason || ""} willReconnect=${willReconnect}`,
-        );
+        /*
+         * console.log(
+         *           `[staffcall ws] close code=${_e.code} reason=${_e.reason || ""} willReconnect=${willReconnect}`,
+         *         );
+         */
 
         if (willReconnect) {
-          console.log(`[staffcall ws] reconnect in ${RECONNECT_DELAY_MS}ms`);
+          /* console.log(`[staffcall ws] reconnect in ${RECONNECT_DELAY_MS}ms`); */
           reconnectTimerId = setTimeout(connect, RECONNECT_DELAY_MS);
         }
       };

@@ -43,7 +43,7 @@ const TableViewGrid: React.FC<Props> = ({ tableList, onSelectTable, onShowToast 
           setLimitHours(parseFloat(data.table_limit_hours));
         }
       } catch (e) {
-        console.error("부스 정보 조회 실패:", e);
+        /* console.error("부스 정보 조회 실패:", e); */
       }
     };
     fetchBoothInfo();

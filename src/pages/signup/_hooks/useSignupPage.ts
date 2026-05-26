@@ -93,7 +93,7 @@ export const useSignupPage = (
             const first = Object.values(bd).find(Array.isArray);
             if (Array.isArray(first) && first[0]) parts.push(first[0]);
           }
-          console.warn('[Signup]', parts.join(' '));
+          /* console.warn('[Signup]', parts.join(' ')); */
         }
       }
       return false;

@@ -9,7 +9,7 @@ export const useCouponList = () => {
       const response = await CouponService.getCouponList();
       setCoupons(response.data);
     } catch {
-      console.error("쿠폰 불러오기 실패");
+      /* console.error("쿠폰 불러오기 실패"); */
     }
   };
 

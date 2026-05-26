@@ -23,7 +23,7 @@ export const CouponRegisterModal = ({ onClose }: { onClose: () => void }) => {
       });
       onClose();
     } catch (err) {
-      console.error('쿠폰 생성 실패:', err);
+      /* console.error('쿠폰 생성 실패:', err); */
     }
   };
 

@@ -64,18 +64,20 @@ export function useOrderManagementWebSocket(
           return;
         }
         setIsConnected(true);
-        console.log('[OrderManagementWS] 연결됨');
+        /* console.log('[OrderManagementWS] 연결됨'); */
       };
 
       ws.onmessage = (event) => {
         try {
           const msg = JSON.parse(event.data as string);
-          const type =
-            (msg && typeof msg.type === 'string' && msg.type) || '(unknown)';
-          console.log('[OrderManagementWS] 수신:', type, msg);
+          /*
+           * const type =
+           *   (msg && typeof msg.type === 'string' && msg.type) || '(unknown)';
+           * console.log('[OrderManagementWS] 수신:', type, msg);
+           */
           const errInfo = getOrderWsErrorInfo(msg);
           if (errInfo) {
-            console.error('[OrderManagementWS] error payload', errInfo);
+            /* console.error('[OrderManagementWS] error payload', errInfo); */
             const codeStr = errInfo.code != null ? String(errInfo.code) : '';
             if (
               errInfo.code === 'AUTH_ERROR' ||
@@ -92,19 +94,23 @@ export function useOrderManagementWebSocket(
           } else if (isAdminNewOrderMessage(msg)) {
             setOrdersRef.current((prev) => applyNewOrder(prev, msg.data));
           } else if (isAdminOrderUpdateMessage(msg)) {
-            console.log(
-              '[OrderManagementWS] ADMIN_ORDER_UPDATE → 목록 반영',
-              msg.data,
-            );
+            /*
+             * console.log(
+             *               '[OrderManagementWS] ADMIN_ORDER_UPDATE → 목록 반영',
+             *               msg.data,
+             *             );
+             */
             setOrdersRef.current((prev) => applyOrderUpdate(prev, msg.data));
           } else if (isAdminOrderCompletedMessage(msg)) {
             setOrdersRef.current((prev) => applyOrderCompleted(prev, msg.data));
           } else if (isAdminOrderCancelledMessage(msg)) {
             setOrdersRef.current((prev) => applyOrderCancelled(prev, msg.data));
           } else if (isAdminTableResetMessage(msg)) {
-            console.log(
-              '[OrderManagementWS] ADMIN_TABLE_RESET → 초기화된 테이블:', msg.data.table_nums,
-            );
+            /*
+             * console.log(
+             *               '[OrderManagementWS] ADMIN_TABLE_RESET → 초기화된 테이블:', msg.data.table_nums,
+             *             );
+             */
             const next = mapSnapshotToOrderBoxData(msg.data.orders);
             setOrdersRef.current(next);
           } else if (
@@ -127,17 +133,19 @@ export function useOrderManagementWebSocket(
       };
 
       ws.onerror = () => {
-        console.warn('[OrderManagementWS] 연결 오류 (상세는 onclose code 확인)');
+        /* console.warn('[OrderManagementWS] 연결 오류 (상세는 onclose code 확인)'); */
       };
 
       ws.onclose = (e) => {
         wsRef.current = null;
         setIsConnected(false);
-        console.log(
-          '[OrderManagementWS] 연결 종료',
-          e.code,
-          e.reason || '(없음)',
-        );
+        /*
+         * console.log(
+         *           '[OrderManagementWS] 연결 종료',
+         *           e.code,
+         *           e.reason || '(없음)',
+         *         );
+         */
 
         if (aborted) return;
 
@@ -146,28 +154,36 @@ export function useOrderManagementWebSocket(
           return;
         }
         if (e.code === NO_BOOTH_CLOSE_CODE) {
-          console.warn(
-            '[OrderManagementWS] close 4003 — 로그인은 되었으나 부스(booth) 미연결. 계정/DB 확인.',
-          );
+          /*
+           * console.warn(
+           *             '[OrderManagementWS] close 4003 — 로그인은 되었으나 부스(booth) 미연결. 계정/DB 확인.',
+           *           );
+           */
           return;
         }
 
         if (e.code === 1006) {
-          console.warn(
-            '[OrderManagementWS] 1006 Abnormal Closure — POST /api/v3/django/auth/refresh/ 로 토큰 재발급 후 재연결합니다.',
-          );
+          /*
+           * console.warn(
+           *             '[OrderManagementWS] 1006 Abnormal Closure — POST /api/v3/django/auth/refresh/ 로 토큰 재발급 후 재연결합니다.',
+           *           );
+           */
           void (async () => {
             try {
               await UserService.refreshTokenV3();
-              console.info(
-                '[OrderManagementWS] 1006 후 토큰 재발급 완료, ' +
-                  `${RECONNECT_AFTER_1006_MS}ms 뒤 재연결`,
-              );
+              /*
+               * console.info(
+               *                 '[OrderManagementWS] 1006 후 토큰 재발급 완료, ' +
+               *                   `${RECONNECT_AFTER_1006_MS}ms 뒤 재연결`,
+               *               );
+               */
             } catch (err) {
-              console.warn(
-                '[OrderManagementWS] 1006 후 토큰 재발급 실패 (재연결은 시도)',
-                err,
-              );
+              /*
+               * console.warn(
+               *                 '[OrderManagementWS] 1006 후 토큰 재발급 실패 (재연결은 시도)',
+               *                 err,
+               *               );
+               */
             }
             if (aborted) return;
             clearReconnectTimer();
@@ -183,14 +199,16 @@ export function useOrderManagementWebSocket(
     const connect = () => {
       const url = getOrderManagementWsUrl();
       if (!url) {
-        console.warn(
-          '[OrderManagementWS] WS URL 없음 (VITE_WS_URL 또는 VITE_BASE_URL 확인)',
-        );
+        /*
+         * console.warn(
+         *           '[OrderManagementWS] WS URL 없음 (VITE_WS_URL 또는 VITE_BASE_URL 확인)',
+         *         );
+         */
         return;
       }
       if (aborted) return;
 
-      console.log('[OrderManagementWS] 연결 시도:', url);
+      /* console.log('[OrderManagementWS] 연결 시도:', url); */
       const ws = new WebSocket(url);
       wsRef.current = ws;
       attachHandlers(ws);

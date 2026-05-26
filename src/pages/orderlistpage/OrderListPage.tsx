@@ -39,17 +39,19 @@ export default function OrderListPage() {
       statusSubmittingRef.current = true;
 
       try {
-        console.log('[OrderList] PATCH /api/v3/django/order/status/', {
+        /*
+         * console.log('[OrderList] PATCH /api/v3/django/order/status/', {
+         *           order_item_id: orderItemId,
+         *           target_status: targetStatus,
+         *         });
+         */
+
+        await updateOrderItemStatus({
           order_item_id: orderItemId,
           target_status: targetStatus,
         });
 
-        const res = await updateOrderItemStatus({
-          order_item_id: orderItemId,
-          target_status: targetStatus,
-        });
-
-        console.log('[OrderList] 상태 변경 요청 완료 (UI는 WS 반영)', res);
+        /* console.log('[OrderList] 상태 변경 요청 완료 (UI는 WS 반영)', res); */
       } catch (err) {
         let message = '상태 변경에 실패했습니다.';
         if (isAxiosError(err)) {

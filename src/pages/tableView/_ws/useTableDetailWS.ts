@@ -80,14 +80,14 @@ export const useTableDetailWS = ({
       if (socketRef.current) return;
 
       const wsUrl = buildTableDetailWsUrl(resolvedTableNum);
-      console.log(`[WS:TableDetail-${resolvedTableNum}] connecting`, wsUrl);
+      /* console.log(`[WS:TableDetail-${resolvedTableNum}] connecting`, wsUrl); */
 
       const socket = new WebSocket(wsUrl);
       socketRef.current = socket;
 
       socket.onopen = () => {
         reconnectAttemptsRef.current = 0;
-        console.log(`[WS:TableDetail-${resolvedTableNum}] connected`);
+        /* console.log(`[WS:TableDetail-${resolvedTableNum}] connected`); */
       };
 
       socket.onmessage = (event) => {
@@ -95,55 +95,67 @@ export const useTableDetailWS = ({
 
         try {
           const payload: TableDetailWSPayload = JSON.parse(event.data);
-          console.log(
-            `[WS:TableDetail-${resolvedTableNum}] event`,
-            payload?.type
-          );
+          /*
+           * console.log(
+           *             `[WS:TableDetail-${resolvedTableNum}] event`,
+           *             payload?.type
+           *           );
+           */
 
           switch (payload.type) {
             case "connection_established":
               onConnectionEstablished?.(payload.data);
               break;
             case "order_update":
-              console.log(
-                `[WS:TableDetail-${resolvedTableNum}] order_update received -> refetch`
-              );
+              /*
+               * console.log(
+               *                 `[WS:TableDetail-${resolvedTableNum}] order_update received -> refetch`
+               *               );
+               */
               onOrderUpdate?.(payload.data);
               break;
             case "reset_table":
-              console.log(
-                `[WS:TableDetail-${resolvedTableNum}] reset_table received`
-              );
+              /*
+               * console.log(
+               *                 `[WS:TableDetail-${resolvedTableNum}] reset_table received`
+               *               );
+               */
               onResetTable?.(payload.data);
               break;
             case "ERROR":
-              console.error(
-                `[WS:TableDetail-${resolvedTableNum}] ERROR event`,
-                payload.data
-              );
+              /*
+               * console.error(
+               *                 `[WS:TableDetail-${resolvedTableNum}] ERROR event`,
+               *                 payload.data
+               *               );
+               */
               onError?.(payload.data);
               break;
             default:
-              console.warn(
-                `[WS:TableDetail-${resolvedTableNum}] unknown event`,
-                payload
-              );
+              /*
+               * console.warn(
+               *                 `[WS:TableDetail-${resolvedTableNum}] unknown event`,
+               *                 payload
+               *               );
+               */
               break;
           }
-        } catch (error) {
-          console.error(`[WS:TableDetail-${resolvedTableNum}] parse error`, error);
+        } catch (_error) {
+          /* console.error(`[WS:TableDetail-${resolvedTableNum}] parse error`, error); */
         }
       };
 
-      socket.onerror = (event) => {
-        console.error(`[WS:TableDetail-${resolvedTableNum}] socket error`, event);
+      socket.onerror = (_event) => {
+        /* console.error(`[WS:TableDetail-${resolvedTableNum}] socket error`, event); */
       };
 
       socket.onclose = (event) => {
-        const { code, reason } = event;
-        console.log(
-          `[WS:TableDetail-${resolvedTableNum}] closed code=${code} reason=${reason}`
-        );
+        const { code, reason: _reason } = event;
+        /*
+         * console.log(
+         *           `[WS:TableDetail-${resolvedTableNum}] closed code=${code} reason=${_reason}`
+         *         );
+         */
 
         socketRef.current = null;
 
@@ -152,9 +164,11 @@ export const useTableDetailWS = ({
         if (reconnectAttemptsRef.current >= MAX_RECONNECT_ATTEMPTS) return;
 
         reconnectAttemptsRef.current += 1;
-        console.log(
-          `[WS:TableDetail-${resolvedTableNum}] reconnect attempt ${reconnectAttemptsRef.current}/${MAX_RECONNECT_ATTEMPTS}`
-        );
+        /*
+         * console.log(
+         *           `[WS:TableDetail-${resolvedTableNum}] reconnect attempt ${reconnectAttemptsRef.current}/${MAX_RECONNECT_ATTEMPTS}`
+         *         );
+         */
 
         clearReconnectTimer();
         reconnectTimerRef.current = window.setTimeout(() => {

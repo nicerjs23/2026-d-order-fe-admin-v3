@@ -22,11 +22,11 @@ export function useTableList(): UseTableListState {
     try {
       const result = await getTableList();
       setTables(result.data);
-      console.info("[useTableList] tables fetch success");
+      /* console.info("[useTableList] tables fetch success"); */
     } catch (e: any) {
       const msg = e?.message ?? "요청 실패";
       setError(msg);
-      console.error("[useTableList] fetch error:", msg);
+      /* console.error("[useTableList] fetch error:", msg); */
     } finally {
       setLoading(false);
     }

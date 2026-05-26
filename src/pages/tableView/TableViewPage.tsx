@@ -38,7 +38,7 @@ const TableViewPage = () => {
 
     // 🌟 대시보드 웹소켓 연결 및 이벤트 매핑
     useTablesWS({
-        onConnectionEstablished: (data) => console.log("[WS 대시보드] 연결 완료:", data),
+        onConnectionEstablished: (_data) => { /* console.log("[WS 대시보드] 연결 완료:", data) */ },
         onMergeTable: () => refetch(),
         onResetTable: () => refetch(),
         onOrderUpdate: () => refetch(),
@@ -48,7 +48,7 @@ const TableViewPage = () => {
                 handleShowToast(`🔔 ${data.table_num}번 테이블에 손님이 입장했습니다!`);
             }
         },
-        onError: (err) => console.error("[WS 대시보드] 에러:", err),
+        onError: (_err) => { /* console.error("[WS 대시보드] 에러:", err) */ },
     });
 
     useEffect(() => {

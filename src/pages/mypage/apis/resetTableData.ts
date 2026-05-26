@@ -30,7 +30,7 @@ function normalizeAndThrow(error: unknown): never {
       message = body.detail;
     }
 
-    console.error("[RESET TABLE][ERROR]", { status, message });
+    /* console.error("[RESET TABLE][ERROR]", { status, message }); */
     throw new Error(message);
   }
 
