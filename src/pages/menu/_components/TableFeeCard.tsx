@@ -4,10 +4,9 @@ import { TableInfo } from '../Type/Menu_type';
 type TableFeeCardProps = { table: TableInfo };
 
 const TableFeeCard = ({ table }: TableFeeCardProps) => {
-  /* console.log(table); */
   return (
     <TableFeeCardWrapper>
-      {table.seat_type === '테이블 이용료 없음' && (
+      {!table.exists && (
         <SoldOutOverlay>
           <SoldOutText>SOLD OUT</SoldOutText>
         </SoldOutOverlay>
@@ -19,29 +18,11 @@ const TableFeeCard = ({ table }: TableFeeCardProps) => {
         <CardInfo>
           <CardTextInner>
             <CardText className='bold'>테이블 이용료</CardText>
-            {table.seat_type === '테이블 이용료 없음' ? (
-              <CardText>0원</CardText>
-            ) : (
-              <>
-                {/* <CardText>{table.seat_tax_person.toLocaleString()}원</CardText> */}
-                <CardText>
-                  {table.seat_type === 'person'
-                    ? table.seat_tax_person.toLocaleString()
-                    : table.seat_tax_table.toLocaleString()}
-                  원
-                </CardText>
-              </>
-            )}
+            <CardText>{table.price.toLocaleString()}원</CardText>
           </CardTextInner>
           <CardTextInner>
             <CardText>기준</CardText>
-            <CardText>
-              {table.seat_type === 'person'
-                ? '인원수'
-                : table.seat_type === 'table'
-                  ? '테이블'
-                  : '기준없음'}
-            </CardText>
+            <CardText>{table.exists ? table.description : '기준없음'}</CardText>
           </CardTextInner>
         </CardInfo>
       </CardContents>

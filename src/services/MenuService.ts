@@ -31,9 +31,9 @@ export interface MenuListResponseV3 {
 function mapV3MenuListToBoothMenuData(res: MenuListResponseV3): BoothMenuData {
   const { booth_id, data } = res;
   const table: TableInfo = {
-    seat_type: '테이블 이용료 없음',
-    seat_tax_person: 0,
-    seat_tax_table: 0,
+    exists: false,
+    price: 0,
+    description: '',
   };
   const menus: Menu[] = [];
   const setmenus: SetMenu[] = [];
@@ -42,9 +42,10 @@ function mapV3MenuListToBoothMenuData(res: MenuListResponseV3): BoothMenuData {
     const idNum = typeof item.id === 'string' ? parseInt(item.id, 10) : item.id;
 
     if (item.category === 'FEE' && item.is_fixed) {
-      table.seat_type = 'person';
-      table.seat_tax_person = item.price;
-      table.seat_tax_table = 0;
+      // description === 'FREE' 는 '받지 않음'(이용료 없음) 상태 (BE 규약)
+      table.exists = item.description !== 'FREE';
+      table.price = item.price;
+      table.description = item.description ?? '';
       continue;
     }
 

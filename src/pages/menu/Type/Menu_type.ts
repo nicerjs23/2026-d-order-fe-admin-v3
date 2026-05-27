@@ -1,7 +1,7 @@
 export type TableInfo = {
-  seat_type: "person" | "table" | "테이블 이용료 없음";
-  seat_tax_person: number;
-  seat_tax_table: number;
+  exists: boolean; // FEE 항목 존재 여부 (없으면 이용료 없음 = SOLD OUT)
+  price: number;
+  description: string; // 기준 (예: "테이블")
 };
 
 export interface Menu {

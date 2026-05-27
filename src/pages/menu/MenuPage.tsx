@@ -37,9 +37,9 @@ const MenuPage = () => {
 
   // 테이블 이용료가 없을 때 사용할 기본 TableInfo 객체
   const defaultTableInfo: TableInfo = {
-    seat_type: "테이블 이용료 없음",
-    seat_tax_person: 0,
-    seat_tax_table: 0,
+    exists: false,
+    price: 0,
+    description: "",
   };
 
   // 일반 메뉴 정렬 (카테고리 우선순위: 차지 -> 메인 -> 음료), '테이블 이용료' 제외
